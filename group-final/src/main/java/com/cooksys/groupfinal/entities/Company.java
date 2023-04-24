@@ -37,5 +37,7 @@ public class Company {
 	@OneToMany(mappedBy = "company")
 	@EqualsAndHashCode.Exclude
 	private Set<Team> teams = new HashSet<>();
+	
+	private boolean deleted = false;
 
 }

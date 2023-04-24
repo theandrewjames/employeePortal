@@ -5,7 +5,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.cooksys.groupfinal.dtos.AnnouncementDto;
+import com.cooksys.groupfinal.dtos.BasicUserDto;
 import com.cooksys.groupfinal.entities.Announcement;
+import com.cooksys.groupfinal.exceptions.NotAuthorizedException;
 import com.cooksys.groupfinal.exceptions.NotFoundException;
 import com.cooksys.groupfinal.mappers.AnnouncementMapper;
 import com.cooksys.groupfinal.repositories.AnnouncementRepository;
@@ -42,6 +44,20 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 		Announcement announcment = findAnnouncement(id);
 		
 		return announcementMapper.entityToDto(announcment);
+		
+	}
+
+	@Override
+	public AnnouncementDto deleteAnnouncement(BasicUserDto basicUserDto, Long id) {
+			
+		Announcement announcement = findAnnouncement(id);
+		
+		if (basicUserDto.isAdmin()) {
+			announcement.setDeleted(true);
+			return announcementMapper.entityToDto(announcementRepository.saveAndFlush(announcement));
+		} else {
+			throw new NotAuthorizedException("You do not have authorization do that action.");
+		}
 		
 	}
 
