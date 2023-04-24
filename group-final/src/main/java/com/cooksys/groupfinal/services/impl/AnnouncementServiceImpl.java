@@ -25,12 +25,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 		Optional<Announcement> announcementSearch = announcementRepository.findById(id);
 		
 		if (announcementSearch.isEmpty()) {
-			throw new NotFoundException("Branch 1");
+			throw new NotFoundException("The announcement with the provided id doesn't exist.");
 		}
 		
 		Announcement announcement = announcementSearch.get();
 		if (announcement.isDeleted()) {
-			throw new NotFoundException("Branch 2");
+			throw new NotFoundException("The announcement with the provided id doesn't exist.");
 		} else {
 			return announcement;
 		}
