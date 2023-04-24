@@ -3,16 +3,30 @@ import { useRecoilState } from "recoil";
 import NavBar from "../../Components/NavBar";
 import { userState } from "../../globalstate";
 import {
+  Box,
   Button,
-  Paper,
   Table,
   TableBody,
-  TableCell,
   TableContainer,
   TableHead,
   TableRow,
 } from "@mui/material";
 import { Fragment } from "react";
+import { styled } from "@mui/material";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    fontSize: 24,
+    color: "#FFFFFF",
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 24,
+    color: "#DEB992",
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({}));
 
 const Users = () => {
   const [user, setUser] = useRecoilState(userState);
@@ -69,46 +83,80 @@ const Users = () => {
 
   return (
     <Fragment>
-      <h1>User Registry</h1>
-      <div>A general view of all your members in your orginization</div>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell align="right">Email</TableCell>
-              <TableCell align="right">Team</TableCell>
-              <TableCell align="right">Active</TableCell>
-              <TableCell align="right">Admin</TableCell>
-              <TableCell align="right">Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell align="right">{row.email}</TableCell>
-                <TableCell align="right">{row.team}</TableCell>
-                <TableCell align="right">
-                  {row.active === true ? "YES" : "NO"}
-                </TableCell>
-                <TableCell align="right">
-                  {row.admin === true ? "YES" : "NO"}
-                </TableCell>
-                <TableCell align="right">
-                  {row.status === true ? "JOINED" : "PENDING"}
-                </TableCell>
+      <div>
+        <NavBar />
+      </div>
+
+      <Box
+        style={{
+          color: "#1ba098",
+          background: "#051622",
+          paddingTop: "100px",
+          textAlign: "center",
+        }}
+      >
+        <div>
+          <h1>User Registry</h1>
+          <div>A general view of all your members in your orginization</div>
+        </div>
+      </Box>
+
+      <Box
+        style={{
+          height: "100vh",
+          paddingTop: "100px",
+          background: "#051622",
+        }}
+      >
+        <TableContainer
+          style={{
+            width: "80vw",
+            margin: "auto",
+            border: "#DEB992",
+            color: "#DEB992",
+          }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Name</StyledTableCell>
+                <StyledTableCell>Email</StyledTableCell>
+                <StyledTableCell>Team</StyledTableCell>
+                <StyledTableCell>Active</StyledTableCell>
+                <StyledTableCell>Admin</StyledTableCell>
+                <StyledTableCell>Status</StyledTableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Button variant="contained">Add User</Button>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <StyledTableRow key={row.name}>
+                  <StyledTableCell>{row.name}</StyledTableCell>
+                  <StyledTableCell>{row.email}</StyledTableCell>
+                  <StyledTableCell>{row.team}</StyledTableCell>
+                  <StyledTableCell>
+                    {row.active === true ? "YES" : "NO"}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {row.admin === true ? "YES" : "NO"}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {row.status === true ? "JOINED" : "PENDING"}
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <Button
+            variant="contained"
+            style={{ background: "#1BA098", borderRadius: "15px" }}
+            onClick={() => {
+              alert("add user");
+            }}
+          >
+            Add User
+          </Button>
+        </TableContainer>
+      </Box>
     </Fragment>
   );
 };
