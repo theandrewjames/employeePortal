@@ -2,6 +2,7 @@ package com.cooksys.groupfinal.services;
 
 import java.util.Set;
 
+import com.cooksys.groupfinal.dtos.AnnouncementRequestDto;
 import com.cooksys.groupfinal.dtos.AnnouncementDto;
 import com.cooksys.groupfinal.dtos.FullUserDto;
 import com.cooksys.groupfinal.dtos.ProjectDto;
@@ -16,5 +17,7 @@ public interface CompanyService {
 	Set<TeamDto> getAllTeams(Long id);
 
 	Set<ProjectDto> getAllProjects(Long companyId, Long teamId);
+
+	AnnouncementDto createAnnouncement(AnnouncementRequestDto announcementRequestDto, Long id);
 
 }

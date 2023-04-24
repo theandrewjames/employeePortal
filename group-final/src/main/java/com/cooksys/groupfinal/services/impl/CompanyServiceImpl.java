@@ -1,7 +1,6 @@
 package com.cooksys.groupfinal.services.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +9,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import com.cooksys.groupfinal.dtos.AnnouncementRequestDto;
 import com.cooksys.groupfinal.dtos.AnnouncementDto;
 import com.cooksys.groupfinal.dtos.FullUserDto;
 import com.cooksys.groupfinal.dtos.ProjectDto;
@@ -19,11 +19,13 @@ import com.cooksys.groupfinal.entities.Company;
 import com.cooksys.groupfinal.entities.Project;
 import com.cooksys.groupfinal.entities.Team;
 import com.cooksys.groupfinal.entities.User;
+import com.cooksys.groupfinal.exceptions.NotAuthorizedException;
 import com.cooksys.groupfinal.exceptions.NotFoundException;
 import com.cooksys.groupfinal.mappers.AnnouncementMapper;
+import com.cooksys.groupfinal.mappers.FullUserMapper;
 import com.cooksys.groupfinal.mappers.ProjectMapper;
 import com.cooksys.groupfinal.mappers.TeamMapper;
-import com.cooksys.groupfinal.mappers.FullUserMapper;
+import com.cooksys.groupfinal.repositories.AnnouncementRepository;
 import com.cooksys.groupfinal.repositories.CompanyRepository;
 import com.cooksys.groupfinal.repositories.TeamRepository;
 import com.cooksys.groupfinal.services.CompanyService;
@@ -36,6 +38,7 @@ public class CompanyServiceImpl implements CompanyService {
 	
 	private final CompanyRepository companyRepository;
 	private final TeamRepository teamRepository;
+	private final AnnouncementRepository announcementRepository;
 	private final FullUserMapper fullUserMapper;
 	private final AnnouncementMapper announcementMapper;
 	private final TeamMapper teamMapper;
@@ -92,6 +95,21 @@ public class CompanyServiceImpl implements CompanyService {
 		team.getProjects().forEach(filteredProjects::add);
 		filteredProjects.removeIf(project -> !project.isActive());
 		return projectMapper.entitiesToDtos(filteredProjects);
+	}
+
+
+	@Override
+	public AnnouncementDto createAnnouncement(AnnouncementRequestDto announcementRequestDto, Long id) {
+		
+		if (!announcementRequestDto.getAuthor().isAdmin()) {
+			throw new NotAuthorizedException("You are not authorized to post this announcement.");
+		}
+
+		Company company = findCompany(id);
+		Announcement announcement = announcementRepository.saveAndFlush(announcementMapper.dtoToEntity(announcementRequestDto));
+		announcement.setCompany(company);
+		
+		return announcementMapper.entityToDto(announcementRepository.saveAndFlush(announcement));
 	}
 
 }
