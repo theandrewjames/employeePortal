@@ -5,6 +5,9 @@ import { userState } from "../../globalstate";
 import {
   Box,
   Button,
+  FormControl,
+  Input,
+  Modal,
   Table,
   TableBody,
   TableContainer,
@@ -14,6 +17,8 @@ import {
 import { Fragment } from "react";
 import { styled } from "@mui/material";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import { useState } from "react";
+import SignUp from "../../Components/SignUp";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -30,6 +35,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({}));
 
 const Users = () => {
   const [user, setUser] = useRecoilState(userState);
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const createData = (name, email, team, active, admin, status) => {
     return { name, email, team, active, admin, status };
@@ -150,13 +164,17 @@ const Users = () => {
             variant="contained"
             style={{ background: "#1BA098", borderRadius: "15px" }}
             onClick={() => {
-              alert("add user");
+              handleOpen();
             }}
           >
             Add User
           </Button>
         </TableContainer>
       </Box>
+      <Button>Open modal</Button>
+      <Modal open={open} onClose={handleClose}>
+        <SignUp />
+      </Modal>
     </Fragment>
   );
 };
