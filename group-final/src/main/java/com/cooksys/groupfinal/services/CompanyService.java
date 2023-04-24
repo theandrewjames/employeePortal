@@ -24,4 +24,5 @@ public interface CompanyService {
 	BasicUserDto createUser(Long id, UserRequestDto userRequestDto);
 	AnnouncementDto createAnnouncement(AnnouncementRequestDto announcementRequestDto, Long id);
 
+	void deleteUser(Long id, Long userId);
 }
