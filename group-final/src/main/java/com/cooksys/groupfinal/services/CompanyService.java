@@ -4,6 +4,11 @@ import java.util.Set;
 
 import com.cooksys.groupfinal.dtos.*;
 import com.cooksys.groupfinal.entities.User;
+import com.cooksys.groupfinal.dtos.AnnouncementRequestDto;
+import com.cooksys.groupfinal.dtos.AnnouncementDto;
+import com.cooksys.groupfinal.dtos.FullUserDto;
+import com.cooksys.groupfinal.dtos.ProjectDto;
+import com.cooksys.groupfinal.dtos.TeamDto;
 
 public interface CompanyService {
 
@@ -17,4 +22,6 @@ public interface CompanyService {
 
 
 	BasicUserDto createUser(Long id, UserRequestDto userRequestDto);
+	AnnouncementDto createAnnouncement(AnnouncementRequestDto announcementRequestDto, Long id);
+
 }
