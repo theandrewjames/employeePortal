@@ -1,12 +1,16 @@
 import { Navigate } from "react-router-dom"
+import { useEffect, useState } from "react"
 import { useRecoilState } from "recoil"
 import NavBar from "../../Components/NavBar"
-import { userState } from "../../globalstate"
+import { userState, companyState } from "../../globalstate"
 import { Button, Box } from "@mui/material"
-import { Stack, Grid, ListItem } from "@mui/material"
+import { getAnnouncements } from "../../Services/announcements"
+import styled from "styled-components"
 
 const Announcements = () => {
   const [user] = useRecoilState(userState)
+  const [company] = useRecoilState(companyState)
+  const [compAnnouncements, setCompAnnoucements] = useState([])
 
   const btnstyle = {
     margin: "2px 0",
@@ -17,6 +21,52 @@ const Announcements = () => {
     width: "5vw",
     height: "5vh",
   }
+
+  const Container = styled.div`
+    background-color: #0b2d45;
+    border-radius: 10px;
+    padding: 20px;
+  `
+
+  const Paragraph = styled.p`
+    margin-bottom: 10px;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: white;
+  `
+  const GridContainer = styled.div`
+    display: grid;
+    grid-template-columns: repeat(1, 5fr);
+    grid-gap: 30px;
+    justify-content: center;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  `
+
+  const GridItem = styled.div`
+    display: flex;
+    justify-content: center;
+  `
+
+  const announcements = [
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+  ]
+
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getAnnouncements(7)
+      console.log("Fetching...")
+      console.log(data)
+      setCompAnnoucements(data)
+      console.log(data)
+    }
+    fetchData()
+  }, [])
 
   const handleNewAnnoucement = () => {}
 
@@ -35,6 +85,7 @@ const Announcements = () => {
             alignItems: "top",
             textAlign: "center",
             flexDirection: "row",
+            flexWrap: "wrap",
           }}
         >
           <div
@@ -49,8 +100,9 @@ const Announcements = () => {
               style={{
                 display: "flex",
                 justifyContent: "center",
+                alignItems: "center",
                 flexDirection: "row",
-                fontSize: "2em",
+                fontSize: "4rem",
                 marginTop: "2%",
                 width: "40vw",
                 height: "10vh",
@@ -70,17 +122,15 @@ const Announcements = () => {
             </Button>
           </div>
         </Box>
-
-        <Grid container spacing={2}>
-          <Grid item>
-            TEST1
-            {/* Add content for the first half of the grid here */}
-          </Grid>
-          <Grid item>
-            TEST2
-            {/* Add content for the second half of the grid here */}
-          </Grid>
-        </Grid>
+        <GridContainer>
+          {announcements.map((announcement) => (
+            <GridItem key={announcement}>
+              <Container>
+                <Paragraph>{announcement}</Paragraph>
+              </Container>
+            </GridItem>
+          ))}
+        </GridContainer>
       </div>
     )
   }
