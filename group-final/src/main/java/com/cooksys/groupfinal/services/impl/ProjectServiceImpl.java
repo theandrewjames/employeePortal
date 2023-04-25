@@ -6,14 +6,11 @@ import com.cooksys.groupfinal.entities.Team;
 import com.cooksys.groupfinal.exceptions.BadRequestException;
 import com.cooksys.groupfinal.exceptions.NotFoundException;
 import com.cooksys.groupfinal.mappers.ProjectMapper;
-import com.cooksys.groupfinal.mappers.TeamMapper;
 import com.cooksys.groupfinal.repositories.ProjectRepository;
 import com.cooksys.groupfinal.repositories.TeamRepository;
-import org.springframework.stereotype.Service;
-
 import com.cooksys.groupfinal.services.ProjectService;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
@@ -50,8 +47,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDto deleteProject(Long projectId) {
-
+    public void deleteProject(Long projectId) {
 
         if (projectRepository.findById(projectId).isPresent()){
             Project projectToDelete = projectRepository.findById(projectId).get();
@@ -64,8 +60,6 @@ public class ProjectServiceImpl implements ProjectService {
             projectToDelete.setTeam(null);
 
             teamRepository.saveAndFlush(team);
-
-            return projectMapper.entityToDto(projectToDelete);
 
         } else {
             throw new NotFoundException("No Project exists with this id: " + projectId);

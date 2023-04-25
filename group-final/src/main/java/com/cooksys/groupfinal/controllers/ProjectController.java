@@ -1,14 +1,9 @@
 package com.cooksys.groupfinal.controllers;
 
 import com.cooksys.groupfinal.dtos.ProjectDto;
-import org.springframework.web.bind.annotation.*;
-
 import com.cooksys.groupfinal.services.ProjectService;
-
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
-import java.util.Set;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/projects")
@@ -29,8 +24,8 @@ public class ProjectController {
 	}
 
 	@DeleteMapping("/{projectId}")
-	public ProjectDto deleteProject(@PathVariable Long projectId){
-		return projectService.deleteProject(projectId);
+	public void deleteProject(@PathVariable Long projectId){
+		projectService.deleteProject(projectId);
 	}
 
 }

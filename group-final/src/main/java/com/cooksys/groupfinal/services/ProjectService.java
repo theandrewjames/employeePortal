@@ -6,7 +6,7 @@ public interface ProjectService {
 
     ProjectDto createProject(ProjectDto projectDto);
 
-    ProjectDto deleteProject(Long projectId);
+    void deleteProject(Long projectId);
 
     ProjectDto getProjectByProjectId(Long projectId);
 

@@ -136,4 +136,15 @@ public class CompanyServiceImpl implements CompanyService {
 		return announcementMapper.entityToDto(announcementRepository.saveAndFlush(announcement));
 	}
 
+	@Override
+	public void deleteUser(Long id, Long userId) {
+		Optional<User> user = userRepository.findById(userId);
+		Company company = findCompany(id);
+		if(!user.isPresent()) {
+			throw new BadRequestException("No user found");
+		}
+		company.getEmployees().remove(user.get());
+		companyRepository.saveAndFlush(company);
+	}
+
 }

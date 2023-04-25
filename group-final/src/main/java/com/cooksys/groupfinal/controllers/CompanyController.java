@@ -38,7 +38,10 @@ public class CompanyController {
     public BasicUserDto createUser(@PathVariable Long id, @RequestBody UserRequestDto userRequestDto) {
 	    return companyService.createUser(id, userRequestDto);
     }
-
+	@DeleteMapping("/{id}/users/{userId}/delete")
+	public void deleteUser(@PathVariable Long id, @PathVariable Long userId) {
+		companyService.deleteUser(id, userId);
+	}
 	@GetMapping("/{id}/announcements")
     public Set<AnnouncementDto> getAllAnnouncements(@PathVariable Long id) {
         return companyService.getAllAnnouncements(id);
