@@ -2,6 +2,7 @@ package com.cooksys.groupfinal.services;
 
 import com.cooksys.groupfinal.dtos.ProjectDto;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ProjectService {
@@ -12,6 +13,7 @@ public interface ProjectService {
 
     ProjectDto getProjectByProjectId(Long projectId);
 
+    List<ProjectDto> getAllProjects();
 
-    // List<ProjectDto> getAllProjectsByTeam();
+    ProjectDto updateActiveProject(Long projectId, ProjectDto projectDto);
 }
