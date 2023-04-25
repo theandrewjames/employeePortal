@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import NavBar from "../../Components/NavBar";
-import { Box, Modal } from "@mui/material";
+import { Modal } from "@mui/material";
 import { Fragment, useEffect } from "react";
 import { useState } from "react";
 import SignUp from "../../Components/SignUp";
@@ -8,7 +8,6 @@ import UsersTable from "../../Components/UsersTable";
 import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { allUsersState, userState } from "../../globalstate";
-import api from "../../Services/api";
 import { getAllUsers } from "../../Services/users";
 
 const Title = styled.h1`
@@ -120,9 +119,13 @@ const Users = () => {
 
   useEffect(() => {
     getUsers();
-  });
+  }, []);
 
   const rows = users;
+
+  const handleName = (profile) => {
+    return profile.firstName + " " + profile.lastName;
+  };
 
   if (!user.isLoggedIn) {
     return <Navigate replace to="/" />;
@@ -139,7 +142,11 @@ const Users = () => {
             <Title>User Registry</Title>
             <div>A general view of all your members in your orginization</div>
           </div>
-          <UsersTable rows={rows} handleOpen={handleOpen} />
+          <UsersTable
+            rows={rows}
+            handleOpen={handleOpen}
+            handleName={handleName}
+          />
           <Modal open={open} onClose={handleClose}>
             <SignUp
               handleChange={handleChange}

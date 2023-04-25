@@ -24,7 +24,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 const StyledTableRow = styled(TableRow)(({ theme }) => ({}));
 
 const UsersTable = (props) => {
-  const { rows, handleOpen } = props;
+  const { rows, handleOpen, handleName } = props;
   return (
     <TableContainer
       style={{
@@ -39,7 +39,7 @@ const UsersTable = (props) => {
           <TableRow>
             <StyledTableCell>Name</StyledTableCell>
             <StyledTableCell>Email</StyledTableCell>
-            <StyledTableCell>Team</StyledTableCell>
+            {/* <StyledTableCell>Team</StyledTableCell> */}
             <StyledTableCell>Active</StyledTableCell>
             <StyledTableCell>Admin</StyledTableCell>
             <StyledTableCell>Status</StyledTableCell>
@@ -48,9 +48,9 @@ const UsersTable = (props) => {
         <TableBody>
           {rows.map((row) => (
             <StyledTableRow key={row.name}>
-              <StyledTableCell>{row.name}</StyledTableCell>
-              <StyledTableCell>{row.email}</StyledTableCell>
-              <StyledTableCell>{row.team}</StyledTableCell>
+              <StyledTableCell>{handleName(row.profile)}</StyledTableCell>
+              <StyledTableCell>{row.profile.email}</StyledTableCell>
+              {/* <StyledTableCell>{row.team}</StyledTableCell> */}
               <StyledTableCell>
                 {row.active === true ? "YES" : "NO"}
               </StyledTableCell>
