@@ -17,9 +17,10 @@ import {
 import styled from "styled-components"
 
 const Announcements = () => {
-  const [user] = useRecoilState(userState)
+  const [user, setUser] = useRecoilState(userState)
   const [company] = useRecoilState(companyState)
-  const [compAnnouncements, setCompAnnoucements] = useState([])
+  const [compAnnouncements, setCompAnnouncements] = useState([])
+  const [announcementUpdate, setAnnouncementUpdate] = useState(false)
   const [openNewDialog, setOpenNewDialog] = useState(false)
   const [title, setTitle] = useState("")
   const [message, setMessage] = useState("")
@@ -77,21 +78,13 @@ const Announcements = () => {
     display: flex;
     justify-content: center;
   `
-
-  const announcements = [
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-  ]
-
   useEffect(() => {
     async function fetchData() {
       const data = await getAnnouncements(company[0].id)
-      setCompAnnoucements(data)
+      setCompAnnouncements(data)
     }
     fetchData()
-  }, [])
+  }, [announcementUpdate])
 
   const handleNewAnnoucement = () => {
     setOpenNewDialog(true)
@@ -107,6 +100,7 @@ const Announcements = () => {
       user
     )
     console.log("Saving announcements...")
+    setAnnouncementUpdate(true)
   }
 
   if (!user.isLoggedIn) {
@@ -120,7 +114,8 @@ const Announcements = () => {
             // marginTop: "10vh",
             background: "#051622",
             width: "100vw",
-            height: "90vh",
+            height: "100%",
+            scrollBehavior: "auto",
           }}
         >
           <Box
@@ -145,15 +140,17 @@ const Announcements = () => {
                 marginTop: "2%",
               }}
             >
-              <Button
-                type="submit"
-                color="primary"
-                variant="contained"
-                style={btnstyle}
-                onClick={() => handleNewAnnoucement()}
-              >
-                New
-              </Button>
+              {user.isAdmin && (
+                <Button
+                  type="submit"
+                  color="primary"
+                  variant="contained"
+                  style={btnstyle}
+                  onClick={() => handleNewAnnoucement()}
+                >
+                  New
+                </Button>
+              )}
               <h1 style={h1Style}> Announcements</h1>
             </div>
           </Box>

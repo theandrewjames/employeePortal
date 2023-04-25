@@ -63,7 +63,7 @@ const Login = () => {
         id: response.id,
         profile: response.profile,
         isAdmin: response.admin,
-        IsActive: response.active,
+        admin: response.admin,
         active: response.active,
         status: response.status,
         companies: response.companies,
@@ -71,18 +71,6 @@ const Login = () => {
       })
     }
   }
-
-  //Hard code true user
-  //   setUser({
-  //     isLoggedIn: true,
-  //     id: response.id,
-  //     profile: response.profile,
-  //     isAdmin: true,
-  //     active: response.active,
-  //     status: response.status,
-  //     companies: ["facebook", "apple", "amazon", "netflix", "google"],
-  //     teams: response.teams,
-  //   })
 
   if (user.isLoggedIn) {
     return <Navigate replace to="/company" />
