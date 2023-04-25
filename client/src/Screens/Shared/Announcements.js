@@ -20,6 +20,22 @@ const Announcements = () => {
     borderRadius: "5%",
     width: "5vw",
     height: "5vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexWrap: "wrap",
+  }
+
+  const h1Style = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    fontSize: "4rem",
+    marginTop: "2%",
+    width: "40vw",
+    height: "10vh",
+    borderBottom: "2px solid #DEB992",
   }
 
   const Container = styled.div`
@@ -63,7 +79,6 @@ const Announcements = () => {
       console.log("Fetching...")
       console.log(data)
       setCompAnnoucements(data)
-      console.log(data)
     }
     fetchData()
   }, [])
@@ -74,64 +89,72 @@ const Announcements = () => {
     return <Navigate replace to="/" />
   } else {
     return (
-      <div style={{ background: "#051622", width: "100vw", height: "100vh" }}>
+      <>
         <NavBar />
-        <Box
+        <div
           style={{
-            color: "#1ba098",
+            // marginTop: "10vh",
             background: "#051622",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "top",
-            textAlign: "center",
-            flexDirection: "row",
-            flexWrap: "wrap",
+            width: "100vw",
+            height: "100vh",
           }}
         >
-          <div
+          <Box
             style={{
+              color: "#1ba098",
+              background: "#051622",
               display: "flex",
+              justifyContent: "center",
+              alignItems: "top",
+              textAlign: "center",
               flexDirection: "row",
-              fontSize: "3em",
-              marginTop: "2%",
+              flexWrap: "wrap",
             }}
           >
-            <h1
+            <div
               style={{
                 display: "flex",
+                flexDirection: "column",
                 justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "row",
-                fontSize: "4rem",
+                alignItems: "top",
+                fontSize: "3em",
                 marginTop: "2%",
-                width: "40vw",
-                height: "10vh",
-                borderBottom: "2px solid #DEB992",
               }}
             >
-              Announcements
-            </h1>
-            <Button
-              type="submit"
-              color="primary"
-              variant="contained"
-              style={btnstyle}
-              onClick={() => handleNewAnnoucement()}
-            >
-              New
-            </Button>
-          </div>
-        </Box>
-        <GridContainer>
-          {announcements.map((announcement) => (
-            <GridItem key={announcement}>
-              <Container>
-                <Paragraph>{announcement}</Paragraph>
-              </Container>
-            </GridItem>
-          ))}
-        </GridContainer>
-      </div>
+              <Button
+                type="submit"
+                color="primary"
+                variant="contained"
+                style={btnstyle}
+                onClick={() => handleNewAnnoucement()}
+              >
+                New
+              </Button>
+              <h1 style={h1Style}>Announcements</h1>
+            </div>
+          </Box>
+          <GridContainer>
+            {compAnnouncements.map((announcement) => (
+              <GridItem key={announcement.id}>
+                <Container>
+                  <Paragraph>
+                    {announcement.author.profile.firstName}{" "}
+                    {announcement.author.profile.lastName}
+                  </Paragraph>
+                  <Paragraph>
+                    {new Date(announcement.date).toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </Paragraph>
+                  <Paragraph>{announcement.message}</Paragraph>
+                </Container>
+              </GridItem>
+            ))}
+          </GridContainer>
+        </div>
+      </>
     )
   }
 }
