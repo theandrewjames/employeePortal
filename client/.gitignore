@@ -23,3 +23,4 @@ yarn-debug.log*
 yarn-error.log*
 
 group-final/bin/
+../group-final/bin/
