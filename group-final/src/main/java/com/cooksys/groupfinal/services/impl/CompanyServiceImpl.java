@@ -7,31 +7,32 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import com.cooksys.groupfinal.dtos.*;
-import com.cooksys.groupfinal.exceptions.BadRequestException;
-import com.cooksys.groupfinal.mappers.*;
-import com.cooksys.groupfinal.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
-import com.cooksys.groupfinal.dtos.AnnouncementRequestDto;
 import com.cooksys.groupfinal.dtos.AnnouncementDto;
+import com.cooksys.groupfinal.dtos.AnnouncementRequestDto;
+import com.cooksys.groupfinal.dtos.BasicUserDto;
 import com.cooksys.groupfinal.dtos.FullUserDto;
 import com.cooksys.groupfinal.dtos.ProjectDto;
 import com.cooksys.groupfinal.dtos.TeamDto;
+import com.cooksys.groupfinal.dtos.UserRequestDto;
 import com.cooksys.groupfinal.entities.Announcement;
 import com.cooksys.groupfinal.entities.Company;
 import com.cooksys.groupfinal.entities.Project;
 import com.cooksys.groupfinal.entities.Team;
 import com.cooksys.groupfinal.entities.User;
+import com.cooksys.groupfinal.exceptions.BadRequestException;
 import com.cooksys.groupfinal.exceptions.NotAuthorizedException;
 import com.cooksys.groupfinal.exceptions.NotFoundException;
 import com.cooksys.groupfinal.mappers.AnnouncementMapper;
+import com.cooksys.groupfinal.mappers.BasicUserMapper;
 import com.cooksys.groupfinal.mappers.FullUserMapper;
 import com.cooksys.groupfinal.mappers.ProjectMapper;
 import com.cooksys.groupfinal.mappers.TeamMapper;
 import com.cooksys.groupfinal.repositories.AnnouncementRepository;
 import com.cooksys.groupfinal.repositories.CompanyRepository;
 import com.cooksys.groupfinal.repositories.TeamRepository;
+import com.cooksys.groupfinal.repositories.UserRepository;
 import com.cooksys.groupfinal.services.CompanyService;
 
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,14 @@ public class CompanyServiceImpl implements CompanyService {
         }
         return team.get();
     }
+	
+	private User findUser(Long id) {
+		Optional<User> user = userRepository.findById(id);
+		if (user.isEmpty()) {
+			throw new NotFoundException("That user doesn't exist.");
+		}
+		return user.get();
+	}
 	
 	@Override
 	public Set<FullUserDto> getAllUsers(Long id) {
@@ -132,6 +141,9 @@ public class CompanyServiceImpl implements CompanyService {
 		Company company = findCompany(id);
 		Announcement announcement = announcementRepository.saveAndFlush(announcementMapper.dtoToEntity(announcementRequestDto));
 		announcement.setCompany(company);
+		
+		User author = findUser(announcement.getAuthor().getId());
+		announcement.setAuthor(author);		
 		
 		return announcementMapper.entityToDto(announcementRepository.saveAndFlush(announcement));
 	}
