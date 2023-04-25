@@ -3,14 +3,17 @@ import { useEffect, useState } from "react"
 import { useRecoilState } from "recoil"
 import NavBar from "../../Components/NavBar"
 import { userState, companyState } from "../../globalstate"
-import { Button, Box } from "@mui/material"
+import { Button, Box, TextField } from "@mui/material"
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
 } from "@mui/material"
-import { getAnnouncements } from "../../Services/announcements"
+import {
+  getAnnouncements,
+  saveAnnouncement,
+} from "../../Services/announcements"
 import styled from "styled-components"
 
 const Announcements = () => {
@@ -18,6 +21,8 @@ const Announcements = () => {
   const [company] = useRecoilState(companyState)
   const [compAnnouncements, setCompAnnoucements] = useState([])
   const [openNewDialog, setOpenNewDialog] = useState(false)
+  const [title, setTitle] = useState("")
+  const [message, setMessage] = useState("")
 
   const btnstyle = {
     margin: "2px 0",
@@ -39,7 +44,7 @@ const Announcements = () => {
     alignItems: "center",
     flexDirection: "row",
     fontSize: "4rem",
-    marginTop: "2%",
+    marginTop: "1%",
     width: "40vw",
     height: "10vh",
     borderBottom: "2px solid #DEB992",
@@ -82,9 +87,7 @@ const Announcements = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const data = await getAnnouncements(7)
-      console.log("Fetching...")
-      console.log(data)
+      const data = await getAnnouncements(company[0].id)
       setCompAnnoucements(data)
     }
     fetchData()
@@ -92,6 +95,18 @@ const Announcements = () => {
 
   const handleNewAnnoucement = () => {
     setOpenNewDialog(true)
+  }
+
+  const saveAnnoucement = async () => {
+    setOpenNewDialog(false)
+    console.log(user)
+    const savedData = await saveAnnouncement(
+      company[0].id,
+      title,
+      message,
+      user
+    )
+    console.log("Saving announcements...")
   }
 
   if (!user.isLoggedIn) {
@@ -105,7 +120,7 @@ const Announcements = () => {
             // marginTop: "10vh",
             background: "#051622",
             width: "100vw",
-            height: "100vh",
+            height: "90vh",
           }}
         >
           <Box
@@ -139,7 +154,7 @@ const Announcements = () => {
               >
                 New
               </Button>
-              <h1 style={h1Style}>Announcements</h1>
+              <h1 style={h1Style}> Announcements</h1>
             </div>
           </Box>
           <GridContainer>
@@ -162,16 +177,24 @@ const Announcements = () => {
               </GridItem>
             ))}
           </GridContainer>
-          {/* <Dialog open={openNewDialog} onClose={() => setOpenNewDialog(false)}>
-            <DialogTitle>Dialog Title</DialogTitle>
-            <DialogContent>
-              <p>Dialog content goes here</p>
-            </DialogContent>
+          <Dialog open={openNewDialog} onClose={() => setOpenNewDialog(false)}>
+            <DialogTitle>Create new announcement</DialogTitle>
+            <TextField
+              label="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              fullWidth
+            />
+            <TextField
+              label="Message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              fullWidth
+            />
             <DialogActions>
-              <Button onClick={() => setOpenNewDialog(false)}>Cancel</Button>
-              <Button onClick={() => setOpenNewDialog(false)}>Save</Button>
+              <Button onClick={() => saveAnnoucement()}>Submit</Button>
             </DialogActions>
-          </Dialog> */}
+          </Dialog>
         </div>
       </>
     )

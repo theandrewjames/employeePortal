@@ -5,11 +5,15 @@ export const getAnnouncements = async (id) => {
   return response.data
 }
 
-export const postAnnouncement = async (id, title, message, BasicUserDto) => {
+export const saveAnnouncement = async (id, title, message, user) => {
+  console.log(user)
+  console.log(title)
+  console.log(message)
+
   const response = await api.post(`company/${id}/announcements`, {
     title: title,
     message: message,
-    author: BasicUserDto,
+    author: user,
   })
   return response.data
 }

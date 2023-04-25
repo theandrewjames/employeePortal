@@ -1,15 +1,15 @@
-import { Avatar, Button, Grid, Paper, TextField } from "@mui/material"
-import React from "react"
-import { useRecoilState } from "recoil"
-import logo from "../../Assets/logo.png"
-import { Navigate } from "react-router-dom"
-import { errorState, userState } from "../../globalstate"
-import { login } from "../../Services/users"
+import { Avatar, Button, Grid, Paper, TextField } from "@mui/material";
+import React from "react";
+import { useRecoilState } from "recoil";
+import logo from "../../Assets/logo.png";
+import { Navigate } from "react-router-dom";
+import { errorState, userState } from "../../globalstate";
+import { login } from "../../Services/users";
 const Login = () => {
-  const [user, setUser] = useRecoilState(userState)
-  const [username, setUsername] = React.useState("")
-  const [password, setPassword] = React.useState("")
-  const [error, setError] = useRecoilState(errorState)
+  const [user, setUser] = useRecoilState(userState);
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [error, setError] = useRecoilState(errorState);
 
   const paperStyle = {
     justifyContent: "center",
@@ -23,12 +23,12 @@ const Login = () => {
     borderRadius: "5px",
     display: "flex",
     flexDirection: "column",
-  }
+  };
   const avatarStyle = {
     backgroundColor: "#1bbd7e",
     height: "80px",
     width: "80px",
-  }
+  };
   const btnstyle = {
     margin: "8px 0",
     background: "#051622",
@@ -36,28 +36,28 @@ const Login = () => {
     border: "1px solid #1ba098",
     borderRadius: "5%",
     width: "10vw",
-  }
+  };
   const inputStyle = {
     background: "#051622",
     borderBottom: "1px solid #deb992",
     marginBottom: "10px",
     textAlign: "center",
-  }
+  };
 
   const handleLogin = async () => {
     if (username === "" || password === "") {
-      setError({ isError: true, message: "Please fill out all fields" })
-      return
+      setError({ isError: true, message: "Please fill out all fields" });
+      return;
     }
 
     const response = await login(username, password).catch((err) => {
-      setError({ isError: true, message: "Invalid username or password" })
-    })
+      setError({ isError: true, message: "Invalid username or password" });
+    });
 
     if (!response) {
-      setError({ isError: true, message: "No Response From Server" })
+      setError({ isError: true, message: "No Response From Server" });
     } else if (response) {
-      setError({ isError: false, message: "" })
+      setError({ isError: false, message: "" });
       setUser({
         isLoggedIn: true,
         id: response.id,
@@ -67,7 +67,7 @@ const Login = () => {
         status: response.status,
         companies: response.companies,
         teams: response.teams,
-      })
+      });
     }
   }
 
@@ -142,8 +142,8 @@ const Login = () => {
           ) : null}
         </Paper>
       </Grid>
-    )
+    );
   }
-}
+};
 
-export default Login
+export default Login;
