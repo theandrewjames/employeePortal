@@ -24,13 +24,13 @@ const Container = styled.div`
   justify-content: center;
   text-align: center;
   height: 100vh;
-  padding-top: 5%;
 `;
 
 const Users = () => {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useRecoilState(userState);
   const [users, setUsers] = useRecoilState(allUsersState);
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
   const [userInfo, setUserInfo] = useState({
     firstName: "",
     lastName: "",
@@ -103,7 +103,11 @@ const Users = () => {
   };
 
   const handleChange = (e) => {
-    setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
+    setUserInfo(() => ({
+      ...userInfo,
+      isAdmin: userIsAdmin,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   const handleSignUp = (e) => {
@@ -120,8 +124,6 @@ const Users = () => {
   useEffect(() => {
     getUsers();
   }, []);
-
-  const rows = users;
 
   const handleName = (profile) => {
     return profile.firstName + " " + profile.lastName;
@@ -143,7 +145,7 @@ const Users = () => {
             <div>A general view of all your members in your orginization</div>
           </div>
           <UsersTable
-            rows={rows}
+            rows={users}
             handleOpen={handleOpen}
             handleName={handleName}
           />
@@ -154,6 +156,8 @@ const Users = () => {
               inputs={inputs}
               userInfo={userInfo}
               setUserInfo={setUserInfo}
+              userIsAdmin={userIsAdmin}
+              setUserIsAdmin={setUserIsAdmin}
             />
           </Modal>
         </Container>
