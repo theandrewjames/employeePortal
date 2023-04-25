@@ -1,14 +1,8 @@
 package com.cooksys.groupfinal.services;
 
-import java.util.Set;
-
 import com.cooksys.groupfinal.dtos.*;
-import com.cooksys.groupfinal.entities.User;
-import com.cooksys.groupfinal.dtos.AnnouncementRequestDto;
-import com.cooksys.groupfinal.dtos.AnnouncementDto;
-import com.cooksys.groupfinal.dtos.FullUserDto;
-import com.cooksys.groupfinal.dtos.ProjectDto;
-import com.cooksys.groupfinal.dtos.TeamDto;
+
+import java.util.Set;
 
 public interface CompanyService {
 

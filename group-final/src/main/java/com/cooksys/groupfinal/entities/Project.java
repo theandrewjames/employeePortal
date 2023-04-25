@@ -22,7 +22,9 @@ public class Project {
 	private String description;
 	
 	private boolean active;
-	
+
+	private boolean deleted;
+
 	@ManyToOne
 	private Team team;
 
