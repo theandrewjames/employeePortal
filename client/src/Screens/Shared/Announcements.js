@@ -24,7 +24,7 @@ const Announcements = () => {
     return <Navigate replace to="/" />
   } else {
     return (
-      <div>
+      <div style={{ background: "#051622", width: "100vw", height: "100vh" }}>
         <NavBar />
         <Box
           style={{
@@ -34,8 +34,6 @@ const Announcements = () => {
             justifyContent: "center",
             alignItems: "top",
             textAlign: "center",
-            width: "100vw",
-            height: "100vh",
             flexDirection: "row",
           }}
         >
@@ -45,16 +43,16 @@ const Announcements = () => {
               flexDirection: "row",
               fontSize: "3em",
               marginTop: "2%",
-              borderBottom: "5px solid #DEB992",
             }}
           >
             <h1
               style={{
                 display: "flex",
+                justifyContent: "center",
                 flexDirection: "row",
                 fontSize: "2em",
                 marginTop: "2%",
-                width: "30vw",
+                width: "40vw",
                 height: "10vh",
                 borderBottom: "2px solid #DEB992",
               }}
@@ -71,10 +69,19 @@ const Announcements = () => {
               New
             </Button>
           </div>
-          <Stack>dfsf</Stack>
         </Box>
+
+        <Grid container spacing={2}>
+          <Grid item>
+            TEST1
+            {/* Add content for the first half of the grid here */}
+          </Grid>
+          <Grid item>
+            TEST2
+            {/* Add content for the second half of the grid here */}
+          </Grid>
+        </Grid>
       </div>
-      //   </div>
     )
   }
 }
