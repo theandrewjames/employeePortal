@@ -32,7 +32,7 @@ public class TeamController {
 	@PostMapping("/{authorId}/company/{companyId}")
 	public TeamDto createTeam(@PathVariable Long authorId, @PathVariable Long companyId, @RequestBody TeamDto teamDto) {
 		return teamService.createTeam(authorId,companyId, teamDto);
-	};
+	}
 
 	@DeleteMapping("/{teamId}")
 	public TeamDto deleteTeam(@PathVariable Long teamId) {

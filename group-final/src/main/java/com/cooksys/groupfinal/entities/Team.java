@@ -39,5 +39,4 @@ public class Team {
 	@OneToMany(mappedBy = "team")
 	@EqualsAndHashCode.Exclude
 	private Set<Project> projects = new HashSet<>();
-
 }

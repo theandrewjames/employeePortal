@@ -15,5 +15,4 @@ public interface TeamMapper {
 	Set<TeamDto> entitiesToDtos(Set<Team> teams);
 
 	Team dtoToEntity(TeamDto teamDto);
-	
 }
