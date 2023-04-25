@@ -11,7 +11,7 @@ import Project from './Screens/Worker/Project';
 function App() {
 
   return (
-    <div>
+    <div className='route-container'>
       <Routes >
         <Route path="/" element={<Login />} />
         <Route path="/announcements" element={<Announcements />} />
