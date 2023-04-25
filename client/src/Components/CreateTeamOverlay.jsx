@@ -9,10 +9,13 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material"
 import { useRecoilState } from "recoil"
 import { companyState } from "../globalstate"
 import { display } from "@mui/system"
+import api from "../Services/api"
 
 const CreateTeamOverlay = () => {
   const [company, setCompany] = useRecoilState(companyState)
   const [open, setOpen] = React.useState(false)
+  const [teamName, setTeamName] = React.useState("")
+  const [description, setDescription] = React.useState("")
   const [selectedMembers, setSelectedMembers] = React.useState([])
 
   const handleClickOpen = () => {
@@ -20,28 +23,51 @@ const CreateTeamOverlay = () => {
   }
 
   const handleClose = () => {
+    createTeam()
     setOpen(false)
-    //TODO send POST request to server
+  }
+
+  const createTeam = async () => {
+    console.log("info: ", teamName, description, selectedMembers)
+
+    const data = {
+      company: company,
+      team: {
+        name: teamName,
+        description: description,
+        users: selectedMembers,
+      },
+    }
+    const [error, response] = await api.post("/team", {
+      data,
+    })
+    if (error) {
+      console.log(error.message)
+      //TODO handle this error
+    }
+    console.log(response.data)
+    // return response.data;
   }
 
   const handleChange = (event) => {
     const {
       target: { value },
     } = event
-    console.log(value)
+    // console.log(value)
     !selectedMembers.map((user) => user.id).includes(value.id) &&
       setSelectedMembers([...selectedMembers, value])
   }
 
   const handleRemoveMember = (event) => {
-    console.log("event: ", event)
-    console.log(event.target.dataset.id)
-    setSelectedMembers(selectedMembers.filter(member => member.id != event.target.dataset.id))
+    // console.log(event.target.dataset.id)
+    setSelectedMembers(
+      selectedMembers.filter((member) => member.id != event.target.dataset.id)
+    )
   }
 
-  React.useEffect(() => {
-    console.log(selectedMembers)
-  }, [selectedMembers])
+  // React.useEffect(() => {
+  //   console.log(selectedMembers)
+  // }, [selectedMembers])
 
   const tempCompany = {
     id: 1,
@@ -139,8 +165,8 @@ const CreateTeamOverlay = () => {
 
   return (
     <div>
-      <Button variant='outlined' onClick={handleClickOpen}>
-        Open form dialog
+      <Button variant='text' onClick={handleClickOpen}>
+        +
       </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogContent>
@@ -152,6 +178,7 @@ const CreateTeamOverlay = () => {
             type='text'
             fullWidth
             variant='standard'
+            onChange={(event) => setTeamName(event.target.value)}
           />
           <TextField
             autoFocus
@@ -161,6 +188,7 @@ const CreateTeamOverlay = () => {
             type='text'
             fullWidth
             variant='standard'
+            onChange={(event) => setDescription(event.target.value)}
           />
           <DialogContentText>Select Members</DialogContentText>
           <FormControl fullWidth>
@@ -187,7 +215,12 @@ const CreateTeamOverlay = () => {
                   {member.profile.firstname}{" "}
                   {member.profile.lastname.slice(0, 1)}.
                 </Button>
-                <Button variant='outlined' color='error' data-id={member.id} onClick={handleRemoveMember}>
+                <Button
+                  variant='outlined'
+                  color='error'
+                  data-id={member.id}
+                  onClick={handleRemoveMember}
+                >
                   X
                 </Button>
               </div>

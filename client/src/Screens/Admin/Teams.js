@@ -83,7 +83,8 @@ const Teams = () => {
     return <Navigate replace to='/' />
   } else {
     return (
-      <div>
+      <div style={{ height: '100%',
+        width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', }}>
         <NavBar />
         <h1 style={{ marginTop: "6vh" }}>Teams</h1>
         {tempCompany.teams.map((team) => (
@@ -106,12 +107,10 @@ const Teams = () => {
         ))}
         <Card onClick={handleCreateNewTeam}>
           <CardContent>
-            <span>+</span>
+            <CreateTeamOverlay></CreateTeamOverlay>
             <span>New Team</span>
           </CardContent>
         </Card>
-        // overlay
-        <CreateTeamOverlay></CreateTeamOverlay>
       </div>
     )
   }
