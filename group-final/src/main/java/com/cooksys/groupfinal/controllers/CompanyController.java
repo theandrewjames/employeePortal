@@ -30,34 +30,42 @@ public class CompanyController {
 	private final CompanyService companyService;
 	
 	@GetMapping("/{id}/users")
+	@CrossOrigin(origins="*")
     public Set<FullUserDto> getAllUsers(@PathVariable Long id) {
         return companyService.getAllUsers(id);
     }
 
     @PostMapping("/{id}/users")
+	@CrossOrigin(origins="*")
     public BasicUserDto createUser(@PathVariable Long id, @RequestBody UserRequestDto userRequestDto) {
 	    return companyService.createUser(id, userRequestDto);
     }
 	@DeleteMapping("/{id}/users/{userId}/delete")
+	@CrossOrigin(origins="*")
 	public void deleteUser(@PathVariable Long id, @PathVariable Long userId) {
 		companyService.deleteUser(id, userId);
 	}
+
 	@GetMapping("/{id}/announcements")
+	@CrossOrigin(origins="*")
     public Set<AnnouncementDto> getAllAnnouncements(@PathVariable Long id) {
         return companyService.getAllAnnouncements(id);
     }
 
 	@GetMapping("/{id}/teams")
+	@CrossOrigin(origins="*")
     public Set<TeamDto> getAllTeams(@PathVariable Long id) {
         return companyService.getAllTeams(id);
     }
 	
-	@GetMapping("/{companyId}/teams/{teamId}/projects") 
+	@GetMapping("/{companyId}/teams/{teamId}/projects")
+	@CrossOrigin(origins="*")
 	public Set<ProjectDto> getAllProjects(@PathVariable Long companyId, @PathVariable Long teamId) {
 		return companyService.getAllProjects(companyId, teamId);
 	}
 	
 	@PostMapping("/{id}/announcements")
+	@CrossOrigin(origins="*")
 	public AnnouncementDto createAnnouncement(@RequestBody AnnouncementRequestDto announcementRequestDto, @PathVariable Long id) {
 		return companyService.createAnnouncement(announcementRequestDto, id);
 	}

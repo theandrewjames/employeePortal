@@ -1,11 +1,6 @@
 package com.cooksys.groupfinal.controllers;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cooksys.groupfinal.dtos.AnnouncementDto;
 import com.cooksys.groupfinal.dtos.BasicUserDto;
@@ -21,11 +16,13 @@ public class AnnouncementController {
 	private final AnnouncementService announcementService;
 	
 	@GetMapping("/{id}")
+	@CrossOrigin(origins="*")
 	public AnnouncementDto getAnnouncementById(@PathVariable Long id) {
 		return announcementService.getAnnouncementById(id);
 	}
 	
 	@DeleteMapping("/{id}")
+	@CrossOrigin(origins="*")
 	public AnnouncementDto deleteAnnouncement(@RequestBody BasicUserDto basicUserDto, @PathVariable Long id) {
 		return announcementService.deleteAnnouncement(basicUserDto, id);
 	}
