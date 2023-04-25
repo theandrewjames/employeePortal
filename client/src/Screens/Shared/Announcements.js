@@ -4,6 +4,12 @@ import { useRecoilState } from "recoil"
 import NavBar from "../../Components/NavBar"
 import { userState, companyState } from "../../globalstate"
 import { Button, Box } from "@mui/material"
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material"
 import { getAnnouncements } from "../../Services/announcements"
 import styled from "styled-components"
 
@@ -11,6 +17,7 @@ const Announcements = () => {
   const [user] = useRecoilState(userState)
   const [company] = useRecoilState(companyState)
   const [compAnnouncements, setCompAnnoucements] = useState([])
+  const [openNewDialog, setOpenNewDialog] = useState(false)
 
   const btnstyle = {
     margin: "2px 0",
@@ -83,7 +90,9 @@ const Announcements = () => {
     fetchData()
   }, [])
 
-  const handleNewAnnoucement = () => {}
+  const handleNewAnnoucement = () => {
+    setOpenNewDialog(true)
+  }
 
   if (!user.isLoggedIn) {
     return <Navigate replace to="/" />
@@ -153,6 +162,16 @@ const Announcements = () => {
               </GridItem>
             ))}
           </GridContainer>
+          {/* <Dialog open={openNewDialog} onClose={() => setOpenNewDialog(false)}>
+            <DialogTitle>Dialog Title</DialogTitle>
+            <DialogContent>
+              <p>Dialog content goes here</p>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setOpenNewDialog(false)}>Cancel</Button>
+              <Button onClick={() => setOpenNewDialog(false)}>Save</Button>
+            </DialogActions>
+          </Dialog> */}
         </div>
       </>
     )
