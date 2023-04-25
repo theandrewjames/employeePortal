@@ -15,9 +15,6 @@ import com.cooksys.groupfinal.services.ProjectService;
 
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -28,54 +25,46 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectMapper projectMapper;
 
     private final TeamRepository teamRepository;
-    private final TeamMapper teamMapper;
-
-    @Override
-    public Set<ProjectDto> getAllProjectsByTeamId(Long teamId) {
-
-        if(teamRepository.findById(teamId).isPresent()){
-            Team team = teamRepository.findById(teamId).get();
-            System.out.println(teamMapper.entityToDto(team));
-
-            Set<Project> teamProjects = team.getProjects();
-            Set<Project> existingProjects = new HashSet<>();
-
-            for (Project project : teamProjects){
-                if (!project.isDeleted()){
-                    existingProjects.add(project);
-                }
-            }
-
-            return projectMapper.entitiesToDtos(existingProjects);
-        } else {
-            throw new NotFoundException("Team id: " + teamId + " does not exist.");
-        }
-    }
 
     @Override
     public ProjectDto createProject(ProjectDto projectDto) {
+
+        if (projectDto.getTeam() == null || projectDto.getTeam().getId() == null){
+            throw new BadRequestException("The given team must not be null");
+        }
 
         if(teamRepository.findById(projectDto.getTeam().getId()).isPresent()){
             Team team = teamRepository.findById(projectDto.getTeam().getId()).get();
 
             Project project = projectRepository.saveAndFlush(projectMapper.dtoToEntity(projectDto));
-            project.setTeam(team);
+
+            Set<Project> teamProjects = team.getProjects();
+            teamProjects.add(project);
+            teamRepository.saveAndFlush(team);
 
             return projectMapper.entityToDto(projectRepository.saveAndFlush(project));
         } else {
-            throw new BadRequestException("No Team exists with this id: " + projectDto.getTeam().getId());
+            throw new NotFoundException("No Team exists with this id: " + projectDto.getTeam().getId());
         }
 
     }
 
     @Override
     public ProjectDto deleteProject(Long projectId) {
+
+
         if (projectRepository.findById(projectId).isPresent()){
             Project projectToDelete = projectRepository.findById(projectId).get();
+
+            Team team = projectToDelete.getTeam();
+            team.getProjects().remove(projectToDelete);
 
             projectToDelete.setDeleted(true);
             projectToDelete.setActive(false);
             projectToDelete.setTeam(null);
+
+            teamRepository.saveAndFlush(team);
+
             return projectMapper.entityToDto(projectToDelete);
 
         } else {
@@ -85,10 +74,16 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDto getProjectByProjectId(Long projectId) {
+
+        if(projectRepository.findById(projectId).get().isDeleted()){
+            throw new NotFoundException("Project " + projectId + " does not exist");
+        }
+
         if (projectRepository.findById(projectId).isPresent()){
             return projectMapper.entityToDto(projectRepository.findById(projectId).get());
         } else {
             throw new NotFoundException("No project exists with this id: " + projectId);
         }
     }
+
 }

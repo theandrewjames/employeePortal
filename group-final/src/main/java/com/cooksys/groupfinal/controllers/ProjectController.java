@@ -17,10 +17,6 @@ public class ProjectController {
 	
 	private final ProjectService projectService;
 
-//	@GetMapping("/{teamId}")
-//	public Set<ProjectDto> getAllProjectsByTeamId(@PathVariable Long teamId){
-//		return projectService.getAllProjectsByTeamId(teamId);
-//	}
 
 	@GetMapping("/{projectId}")
 	public ProjectDto getProjectByProjectId(@PathVariable Long projectId){
