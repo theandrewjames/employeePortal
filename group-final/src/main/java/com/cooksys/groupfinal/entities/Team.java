@@ -27,6 +27,8 @@ public class Team {
 	
 	private String description;
 	
+	private Boolean deleted = false;
+	
 	@ManyToOne
 	private Company company;
 	
@@ -37,5 +39,4 @@ public class Team {
 	@OneToMany(mappedBy = "team")
 	@EqualsAndHashCode.Exclude
 	private Set<Project> projects = new HashSet<>();
-
 }
