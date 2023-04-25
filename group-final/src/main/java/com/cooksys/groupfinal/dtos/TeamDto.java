@@ -1,3 +1,4 @@
+
 package com.cooksys.groupfinal.dtos;
 
 import java.util.Set;
@@ -16,5 +17,6 @@ public class TeamDto {
     private String description;
     
     private Set<BasicUserDto> teammates;
-
+    
+    private Boolean deleted = false;
 }
