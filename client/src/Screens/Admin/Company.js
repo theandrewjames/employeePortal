@@ -57,9 +57,9 @@ const CompanyScreen = () => {
             label='Pick a company'
             onChange={handleChange}
           >
-            {user.companies.map((company) => (
-              <MenuItem key={company} value={company}>
-                {company}
+            {user.companies.map((companyDto) => (
+              <MenuItem key={companyDto.id} value={companyDto.name}>
+                {companyDto.name}
               </MenuItem>
             ))}
           </Select>
