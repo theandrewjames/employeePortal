@@ -12,6 +12,7 @@ import com.cooksys.groupfinal.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -69,14 +70,14 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectDto getProjectByProjectId(Long projectId) {
 
-        if(projectRepository.findById(projectId).get().isDeleted()){
-            throw new NotFoundException("Project " + projectId + " does not exist");
-        }
+        Optional<Project> projectToFind = projectRepository.findById(projectId);
 
-        if (projectRepository.findById(projectId).isPresent()){
-            return projectMapper.entityToDto(projectRepository.findById(projectId).get());
-        } else {
+        if (projectToFind.isEmpty()){
             throw new NotFoundException("No project exists with this id: " + projectId);
+        } else if (projectToFind.get().isDeleted()){
+            throw new NotFoundException("No project exists with this id: " + projectId);
+        }else {
+            return projectMapper.entityToDto(projectRepository.findById(projectId).get());
         }
     }
 
