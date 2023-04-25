@@ -1,8 +1,9 @@
 import { Box } from "@mui/material";
 import React from "react";
+import { useRef } from "react";
 import styled from "styled-components";
 
-const Form = styled.div`
+const Form = styled.form`
   background: #051622;
   display: flex;
   align-items: center;
@@ -50,8 +51,7 @@ const styledModal = {
 };
 
 const SignUp = (props) => {
-  const { admin, setAdmin, handleChange, handleSignUp, inputs, userInfo } =
-    props;
+  const { handleChange, handleSignUp, inputs, userInfo, setUserInfo } = props;
 
   return (
     <Box sx={{ ...styledModal, width: "50%", height: "70%" }}>
@@ -65,9 +65,12 @@ const SignUp = (props) => {
           />
         ))}
         <Title>Make user an admin role?</Title>
-        <select value={admin}>
-          <option>true</option>
-          <option>false</option>
+        <select
+          value={userInfo.isAdmin}
+          onChange={(e) => (setUserInfo.isAdmin = e.target.value)}
+        >
+          <option value={true}>true</option>
+          <option value={false}>false</option>
         </select>
         <Button>Submit</Button>
       </Form>

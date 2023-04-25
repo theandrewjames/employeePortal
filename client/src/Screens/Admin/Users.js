@@ -1,27 +1,46 @@
 import { Navigate } from "react-router-dom";
 import NavBar from "../../Components/NavBar";
 import { Box, Modal } from "@mui/material";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { useState } from "react";
 import SignUp from "../../Components/SignUp";
 import UsersTable from "../../Components/UsersTable";
 import styled from "styled-components";
+import { useRecoilState } from "recoil";
+import { allUsersState, userState } from "../../globalstate";
+import api from "../../Services/api";
+import { getAllUsers } from "../../Services/users";
 
 const Title = styled.h1`
   font-weight: bold;
   font-size: 48px;
 `;
 
+const Container = styled.div`
+  background-color: #051622;
+  color: #1ba098;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100vh;
+  padding-top: 5%;
+`;
+
 const Users = () => {
   const [open, setOpen] = useState(false);
-  const [admin, setAdmin] = useState(false);
+  const [user, setUser] = useRecoilState(userState);
+  const [users, setUsers] = useRecoilState(allUsersState);
   const [userInfo, setUserInfo] = useState({
     firstName: "",
     lastName: "",
     email: "",
+    phone: "",
+    username: "",
     password: "",
     confirmPassword: "",
-    admin: false,
+    isAdmin: false,
   });
 
   const inputs = [
@@ -30,35 +49,49 @@ const Users = () => {
       name: "firstName",
       type: "text",
       placeholder: "First Name",
-      labe: "First Name",
+      label: "First Name",
     },
     {
       id: 2,
       name: "lastName",
       type: "text",
       placeholder: "Last Name",
-      labe: "Last Name",
+      label: "Last Name",
     },
     {
       id: 3,
       name: "email",
       type: "text",
       placeholder: "Email",
-      labe: "Email",
+      label: "Email",
     },
     {
       id: 4,
-      name: "password",
-      type: "password",
-      placeholder: "Password",
-      labe: "Password",
+      name: "phone",
+      type: "text",
+      placeholder: "Phone",
+      label: "Phone",
     },
     {
       id: 5,
+      name: "username",
+      type: "username",
+      placeholder: "Username",
+      label: "Username",
+    },
+    {
+      id: 6,
+      name: "password",
+      type: "password",
+      placeholder: "Password",
+      label: "Password",
+    },
+    {
+      id: 7,
       name: "confirmPassword",
       type: "password",
       placeholder: "Confirm Password",
-      labe: "Confirm Password",
+      label: "Confirm Password",
     },
   ];
 
@@ -76,101 +109,50 @@ const Users = () => {
 
   const handleSignUp = (e) => {
     e.preventDefault();
-    const data = new FormData(e.target);
-    console.log(Object.fromEntries(data.entries()));
+    console.log(userInfo);
   };
 
-  const createData = (name, email, team, active, admin, status) => {
-    return { name, email, team, active, admin, status };
+  const getUsers = () => {
+    getAllUsers(6).then((result) => {
+      setUsers(result);
+    });
   };
 
-  const rows = [
-    createData(
-      "Chris Purnell",
-      "yocrizzle@gmail.com",
-      "Chick-Filla",
-      true,
-      true,
-      true
-    ),
-    createData(
-      "Frank Fournier",
-      "foshizzle@gmail.com",
-      "PopEyes",
-      true,
-      true,
-      true
-    ),
-    createData(
-      "Will Marttala",
-      "wamizzle@gmail.com",
-      null,
-      false,
-      false,
-      false
-    ),
-    createData(
-      "Helena Makendengue",
-      "hmasizzle@gmail.com",
-      null,
-      false,
-      false,
-      false
-    ),
-  ];
+  useEffect(() => {
+    getUsers();
+  });
 
-  // if (!user.isLoggedIn) {
-  //     return <Navigate replace to="/" />
-  // } else {
-  //     return (
-  //         <div>
-  //             <NavBar />
-  //             <h1>Users</h1>
-  //         </div>
-  //     )
-  // }
+  const rows = users;
 
-  return (
-    <Fragment>
-      <div>
-        <NavBar />
-      </div>
-
-      <Box
-        style={{
-          color: "#1ba098",
-          background: "#051622",
-          paddingTop: "100px",
-          textAlign: "center",
-        }}
-      >
+  if (!user.isLoggedIn) {
+    return <Navigate replace to="/" />;
+  } else if (!user.isAdmin) {
+    return <Navigate replace to="/announcements" />;
+  } else {
+    return (
+      <Fragment>
         <div>
-          <Title>User Registry</Title>
-          <div>A general view of all your members in your orginization</div>
+          <NavBar />
         </div>
-      </Box>
-
-      <Box
-        style={{
-          height: "100vh",
-          paddingTop: "100px",
-          background: "#051622",
-        }}
-      >
-        <UsersTable rows={rows} handleOpen={handleOpen} />
-      </Box>
-      <Modal open={open} onClose={handleClose}>
-        <SignUp
-          admin={admin}
-          setAdmin={setAdmin}
-          handleChange={handleChange}
-          handleSignUp={handleSignUp}
-          inputs={inputs}
-          userInfo={userInfo}
-        />
-      </Modal>
-    </Fragment>
-  );
+        <Container>
+          <div>
+            <Title>User Registry</Title>
+            <div>A general view of all your members in your orginization</div>
+          </div>
+          <UsersTable rows={rows} handleOpen={handleOpen} />
+          <Modal open={open} onClose={handleClose}>
+            <SignUp
+              handleChange={handleChange}
+              handleSignUp={handleSignUp}
+              inputs={inputs}
+              userInfo={userInfo}
+              setUserInfo={setUserInfo}
+            />
+          </Modal>
+        </Container>
+      </Fragment>
+    );
+  }
 };
 
 export default Users;
