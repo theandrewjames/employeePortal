@@ -8,7 +8,6 @@ import com.cooksys.groupfinal.dtos.TeamDto;
 
 public interface TeamService {
 
-	
 	Set<TeamDto> getTeams(Long id);
 
 	TeamDto createTeam(Long authorId, Long companyId, TeamDto teamRequestDto);

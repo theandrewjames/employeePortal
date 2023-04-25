@@ -29,7 +29,6 @@ public class Team {
 	
 	private Boolean deleted = false;
 	
-	
 	@ManyToOne
 	private Company company;
 	

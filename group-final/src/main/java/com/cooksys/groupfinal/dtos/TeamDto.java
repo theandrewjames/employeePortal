@@ -18,4 +18,5 @@ public class TeamDto {
     private Set<BasicUserDto> teammates;
     
     private Boolean deleted = false;
+    
 }

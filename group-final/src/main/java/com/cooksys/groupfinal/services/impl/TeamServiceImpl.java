@@ -78,4 +78,5 @@ public class TeamServiceImpl implements TeamService {
 		team.setDeleted(true);
 		return teamMapper.entityToDto(teamRepository.saveAndFlush(team));
 	}
+	
 }
