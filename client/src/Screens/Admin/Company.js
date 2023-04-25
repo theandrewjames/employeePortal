@@ -1,19 +1,43 @@
-import { Navigate } from 'react-router-dom'
+import { Navigate, redirect } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
-import { userState } from '../../globalstate'
-import { useState } from 'react'
+import { companyState, userState } from '../../globalstate'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Select from '@mui/material/Select'
+import { useState } from 'react'
+import styled from 'styled-components'
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #051622;
+`
+
+const FormContainer = styled(FormControl)`
+  width: 300px;
+  background-color: white;
+`
+const Title = styled.h1`
+  font-size: 3rem;
+  margin-bottom: 20px;
+  margin-top: 0;
+  color: #1ba098;
+`
+
 const CompanyScreen = () => {
   const [user, setUser] = useRecoilState(userState)
+  const [company, setCompany] = useRecoilState(companyState)
+  const [companySelected, setCompanySelected] = useState(false)
 
-  //Get companies that admin can access
-  const [company, setCompany] = useState('')
+  setCompany('')
 
   const handleChange = (event) => {
     setCompany(event.target.value)
+    setCompanySelected(true)
   }
 
   if (!user.isLoggedIn) {
@@ -21,10 +45,12 @@ const CompanyScreen = () => {
   } else if (!user.isAdmin) {
     return <Navigate replace to='/announcements' />
   } else {
-    return (
-      <div>
-        <h1>Select Company</h1>
-        <FormControl fullWidth>
+    return companySelected ? (
+      <Navigate replace to='/announcements' />
+    ) : (
+      <Container>
+        <Title>Select Company</Title>
+        <FormContainer>
           <InputLabel>Pick a company</InputLabel>
           <Select
             value={company}
@@ -37,8 +63,8 @@ const CompanyScreen = () => {
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
-      </div>
+        </FormContainer>
+      </Container>
     )
   }
 }
