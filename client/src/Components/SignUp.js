@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import React, { Fragment } from "react";
 import styled from "styled-components";
 
-const Form = styled.form`
+const Form = styled.div`
   background: #051622;
   display: flex;
   align-items: center;
@@ -17,15 +17,24 @@ const Form = styled.form`
 const Title = styled.h1`
   font-weight: bold;
   margin: 0;
+  font-size: 25px;
+  padding: 10px;
 `;
 
 const Input = styled.input`
-  background-color: black;
+  background-color: transparent;
   border: none;
-  padding: 12px 15px;
-  margin: 8px 0;
-  width: 100%;
+  border-bottom: 2px solid #deb992;
+  padding: 7px 15px;
+  margin: 5px 0;
+  width: 60%;
   color: #deb992;
+  &::placeholder {
+    color: #deb992;
+  }
+  &:focus {
+    outline: none;
+  }
 `;
 
 const Button = styled.button`
@@ -39,29 +48,27 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-const styledModal = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  transition: "transform 0.6s ease-in-out",
-  textAlign: "center",
-  zIndex: 100,
-  width: "50%",
-  height: "70%",
-};
+const StyledModal = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.6s ease-in-out;
+  text-align: center;
+  z-index: 100;
+  width: 50%;
+  height: 70%;
+`;
+
+const StyledSelect = styled.select`
+  text-align: center;
+  height: 60%;
+  width: 80%;
+`;
 
 const SignUp = (props) => {
-  const {
-    handleChange,
-    handleSignUp,
-    userInfo,
-    setUserIsAdmin,
-    form,
-    setForm,
-    formError,
-    resetError,
-  } = props;
+  const { handleSignUp, setUserIsAdmin, form, setForm, formError, resetError } =
+    props;
   const options = ["False", "True"];
 
   const handleSelect = (event) => {
@@ -71,28 +78,7 @@ const SignUp = (props) => {
   };
 
   return (
-    <Box sx={{ ...styledModal }}>
-      {/* <Form onSubmit={handleSignUp}>
-        {inputs.map((input) => (
-          <Input
-            key={input.id}
-            {...input}
-            value={userInfo[input.name]}
-            onChange={handleChange}
-          />
-        ))}
-
-        <div style={{ margin: "25px" }}>
-          <Title>Make user an admin role?</Title>
-          <select onChange={handleSelect}>
-            <option>Pick an option!</option>
-            {options.map((option, index) => {
-              return <option key={index}>{option}</option>;
-            })}
-          </select>
-        </div>
-        <Button>Submit</Button>
-      </Form> */}
+    <StyledModal>
       <Form>
         {Object.entries(form).map(([key, props]) => (
           <Fragment>
@@ -123,7 +109,39 @@ const SignUp = (props) => {
             )}
           </Fragment>
         ))}
-        <Button>Sign Up</Button>
+
+        {/* <Input
+          placeholder="First Name"
+          type="text"
+          onChange={(e) =>
+            setForm({
+              ...form,
+              firstName: e.target.value,
+            })
+          }
+        />
+        <Input placeholder="Last Name" type="text" />
+        <Input placeholder="Email" type="email" />
+        <Input
+          placeholder="Phone"
+          type="tel"
+          pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+        />
+        <Input placeholder="Username" type="text" />
+        <Input placeholder="Password" type="password" />
+        <Input placeholder="Confirm Password" type="password" /> */}
+
+        <div style={{ margin: "25px" }}>
+          <Title>Make user an admin role?</Title>
+          <StyledSelect onChange={handleSelect}>
+            <option>Pick an option!</option>
+            {options.map((option, index) => {
+              return <option key={index}>{option}</option>;
+            })}
+          </StyledSelect>
+        </div>
+
+        <Button onClick={handleSignUp}>Sign Up</Button>
         {formError.isError && !formError.field ? (
           <p
             style={{
@@ -138,7 +156,7 @@ const SignUp = (props) => {
           ""
         )}
       </Form>
-    </Box>
+    </StyledModal>
   );
 };
 

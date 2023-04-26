@@ -68,11 +68,6 @@ const initialFormState = {
     placeholder: "Confirm Password",
     type: "password",
   },
-  admin: {
-    value: false,
-    placeholder: "Admin",
-    type: "text",
-  },
 };
 
 const Users = () => {
@@ -83,18 +78,8 @@ const Users = () => {
   const [userIsAdmin, setUserIsAdmin] = useState(false);
   const [form, setForm] = useState(initialFormState);
   const [formError, setFormError] = useRecoilState(errorState);
-  const [allUsers, setAllUsers] = useState([]);
+  const [newUser, setNewUser] = useState(false);
   const resetError = () => setFormError(errorState);
-  const [userInfo, setUserInfo] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-    isAdmin: false,
-  });
 
   const formIsValid = () => {
     if (
@@ -131,8 +116,6 @@ const Users = () => {
     return true;
   };
 
-  const COMPANY_ID = company.id;
-
   const handleOpen = () => {
     setOpen(true);
   };
@@ -141,35 +124,49 @@ const Users = () => {
     setOpen(false);
   };
 
-  const handleChange = (e) => {
-    setUserInfo(() => ({
-      ...userInfo,
-      isAdmin: userIsAdmin,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  // const handleChange = (e) => {
+  //   setUserInfo(() => ({
+  //     ...userInfo,
+  //     isAdmin: userIsAdmin,
+  //     [e.target.name]: e.target.value,
+  //   }));
+  // };
 
   const handleSignUp = (e) => {
     e.preventDefault();
     console.log(form);
 
     if (formIsValid()) {
-      createUser(COMPANY_ID, form)
+      createUser(company.id, {
+        credentials: {
+          username: form.username.value,
+          password: form.password.value,
+        },
+        profile: {
+          firstName: form.firstName.value,
+          lastName: form.lastName.value,
+          email: form.email.value,
+          phone: form.phone.value,
+        },
+        admin: userIsAdmin,
+      })
         .then((data) => {
           setForm(initialFormState);
-          setUsers([...users, data]);
-          // setAllUsers([...allUsers, response]);
+          setOpen(false);
+          setNewUser(true);
+          // setUsers([...users, data]);
         })
         .catch((error) => console.log(error));
     }
   };
 
   useEffect(() => {
-    console.log(company);
-    getAllUsers(COMPANY_ID).then((data) => {
+    async function getUsers() {
+      const data = await getAllUsers(company.id);
       setUsers(data);
-    });
-  }, []);
+    }
+    getUsers();
+  }, [newUser]);
 
   const handleName = (profile) => {
     return profile.firstName + " " + profile.lastName;
@@ -193,9 +190,7 @@ const Users = () => {
           <UsersTable handleOpen={handleOpen} handleName={handleName} />
           <Modal open={open} onClose={handleClose}>
             <SignUp
-              handleChange={handleChange}
               handleSignUp={handleSignUp}
-              userInfo={userInfo}
               setUserIsAdmin={setUserIsAdmin}
               form={form}
               setForm={setForm}
