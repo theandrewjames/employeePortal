@@ -8,20 +8,11 @@ export const login = async (username, password) => {
   return response.data;
 };
 
-export const createUser = async (companyId, userInfo) => {
-  const response = await api.post(`/company/${companyId}/users`, {
-    credentials: {
-      username: userInfo.username.value,
-      password: userInfo.password.value,
-    },
-    profile: {
-      firstName: userInfo.firstName.value,
-      lastName: userInfo.lastName.value,
-      email: userInfo.email.value,
-      phone: userInfo.phone.value,
-    },
-    admin: userInfo.admin,
-  });
+export const createUser = async (companyId, userRequestDto) => {
+  const response = await api.post(
+    `/company/${companyId}/users`,
+    userRequestDto
+  );
   return response.data;
 };
 

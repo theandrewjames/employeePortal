@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import {
   Button,
   Table,
@@ -9,8 +9,9 @@ import {
 } from "@mui/material";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material";
-import { useRecoilState } from "recoil";
-import { allUsersState } from "../globalstate";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { allUsersState, companyState } from "../globalstate";
+import { getAllUsers } from "../Services/users";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -29,7 +30,19 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const UsersTable = (props) => {
   const { handleOpen, handleName } = props;
-  const [users, setUsers] = useRecoilState(allUsersState);
+
+  const users = useRecoilValue(allUsersState);
+  const company = useRecoilValue(companyState);
+  const setUsers = useSetRecoilState(allUsersState);
+
+  useEffect(() => {
+    async function getUsers() {
+      const data = await getAllUsers(company.id);
+      setUsers(data);
+    }
+    getUsers();
+  }, [users]);
+
   return (
     <Fragment>
       <TableContainer
@@ -63,14 +76,34 @@ const UsersTable = (props) => {
                 <StyledTableCell>
                   {user.admin === true ? "YES" : "NO"}
                 </StyledTableCell>
-                <StyledTableCell>
-                  {user.status === true ? "JOINED" : "PENDING"}
-                </StyledTableCell>
+                <StyledTableCell>{user.status}</StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+      {/* <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Active</th>
+            <th>Admin</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.name}>
+              <td>{handleName(user.profile)}</td>
+              <td>{user.profile.email}</td>
+              <td>{user.active === true ? "YES" : "NO"}</td>
+              <td>{user.admin === true ? "YES" : "NO"}</td>
+              <td>{user.status}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table> */}
       <Button
         variant="contained"
         style={{ background: "#1BA098", borderRadius: "15px" }}

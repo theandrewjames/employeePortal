@@ -1,6 +1,10 @@
 import { Box } from "@mui/material";
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
+import { allUsersState, companyState, errorState } from "../globalstate";
+import { createUser } from "../Services/users";
+import { SignUpForm } from "./SignUpForm";
 
 const Form = styled.div`
   background: #051622;
@@ -67,9 +71,79 @@ const StyledSelect = styled.select`
 `;
 
 const SignUp = (props) => {
-  const { handleSignUp, setUserIsAdmin, form, setForm, formError, resetError } =
-    props;
+  const { setOpen } = props;
   const options = ["False", "True"];
+
+  const company = useRecoilValue(companyState);
+  const setNewUser = useSetRecoilState(allUsersState);
+
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
+  const [form, setForm] = useState(SignUpForm);
+  const [formError, setFormError] = useRecoilState(errorState);
+
+  const resetError = () => setFormError(errorState);
+
+  const formIsValid = () => {
+    if (
+      !form.firstName.value ||
+      !form.lastName.value ||
+      !form.email.value ||
+      !form.phone.value
+    ) {
+      setFormError({
+        ...formError,
+        isError: true,
+        message: "All fields are required",
+      });
+      return false;
+    } else if (
+      !form.email.value.match(
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+      )
+    ) {
+      setFormError({
+        ...formError,
+        isError: true,
+        message: "Email must be in format a-z@a-z.com",
+        field: "email",
+      });
+    } else if (form.password.value !== form.confirmPassword.value) {
+      setFormError({
+        ...formError,
+        isError: true,
+        message: "Passwords doen't match",
+        field: "password",
+      });
+    }
+    return true;
+  };
+
+  const handleSignUp = (e) => {
+    e.preventDefault();
+    console.log(form);
+
+    if (formIsValid()) {
+      createUser(company.id, {
+        credentials: {
+          username: form.username.value,
+          password: form.password.value,
+        },
+        profile: {
+          firstName: form.firstName.value,
+          lastName: form.lastName.value,
+          email: form.email.value,
+          phone: form.phone.value,
+        },
+        admin: userIsAdmin,
+      })
+        .then((data) => {
+          setForm(SignUpForm);
+          setOpen(false);
+          setNewUser([...allUsersState, data]);
+        })
+        .catch((error) => console.log(error));
+    }
+  };
 
   const handleSelect = (event) => {
     event.target.value === "False"
@@ -109,27 +183,6 @@ const SignUp = (props) => {
             )}
           </Fragment>
         ))}
-
-        {/* <Input
-          placeholder="First Name"
-          type="text"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              firstName: e.target.value,
-            })
-          }
-        />
-        <Input placeholder="Last Name" type="text" />
-        <Input placeholder="Email" type="email" />
-        <Input
-          placeholder="Phone"
-          type="tel"
-          pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-        />
-        <Input placeholder="Username" type="text" />
-        <Input placeholder="Password" type="password" />
-        <Input placeholder="Confirm Password" type="password" /> */}
 
         <div style={{ margin: "25px" }}>
           <Title>Make user an admin role?</Title>
