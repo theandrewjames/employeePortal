@@ -5,33 +5,38 @@ import { userState, companyState, currentTeamState } from "../../globalstate"
 import { Button, Card, CardContent, CardHeader } from "@mui/material"
 import CreateTeamOverlay from "../../Components/CreateTeamOverlay"
 import { useEffect, useState } from "react"
-
-const handleCreateNewTeam = () => {
-  console.log("Add new team")
-}
+import { getProjectsByTeam } from "../../Services/teams"
 
 const Teams = () => {
   const [user, setUser] = useRecoilState(userState)
   const [company, setCompany] = useRecoilState(companyState)
   const [currentTeam, setCurrentTeam] = useRecoilState(currentTeamState)
   const [teamSelected, setTeamSelected] = useState(false)
+  const [teamProjectsCounts, setTeamProjectsCounts] = useState([])
 
   useEffect(() => {
+    const teamIds = company[0]?.teams?.map((team) => team.id)
+    console.log(teamIds)
+    teamIds?.forEach(async (teamId) => {
+      const projects = await getProjectsByTeam(company[0].id, teamId)
+      setTeamProjectsCounts([...teamProjectsCounts, { teamId: teamId, projectsCount: '# of Projects: ' + projects.length }])
+    })
     console.log(company)
-    console.log(currentTeam)
-  }, [company, currentTeam, setCurrentTeam])
+  }, [company])
 
   const handleCardClick = (event) => {
     console.log(event.currentTarget.dataset.id)
     const team = company[0].teams.filter(
-        (team) => team.id == event.currentTarget.dataset.id
-      )[0]
+      (team) => team.id == event.currentTarget.dataset.id
+    )[0]
     console.log(team)
 
-    setCurrentTeam(
-      team
-    )
+    setCurrentTeam(team)
     setTeamSelected(true)
+  }
+
+  const handleCreateNewTeam = () => {
+    console.log("Add new team")
   }
 
   if (!user.isLoggedIn) {
@@ -53,7 +58,7 @@ const Teams = () => {
         <h1 style={{ marginTop: "6vh" }}>Teams</h1>
         {company[0]?.teams?.map((team) => (
           <Card key={team.id} data-id={team.id} onClick={handleCardClick}>
-            <CardHeader title={team.name} subheader='# of Projects: 5' />
+            <CardHeader title={team.name} subheader={teamProjectsCounts[0]?.projectsCount} />
             <CardContent>
               <h3>Members</h3>
               {team?.teammates?.map((user) => (
