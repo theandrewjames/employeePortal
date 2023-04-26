@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import NavBar from '../../Components/NavBar'
-import { userState } from '../../globalstate'
+import { currentTeamState, userState } from '../../globalstate'
 import { cloneElement, useEffect, useState } from 'react'
 import {
   Avatar,
@@ -47,6 +47,7 @@ const Projects = () => {
   const [projectName, setProjectName] = useState('')
   const [description, setDescription] = useState('')
   const [isActiveProject, setIsActiveProject] = useState(false)
+  const [teamState, setTeamState] = useRecoilState(currentTeamState)
 
   useEffect(() => {
     async function fetchData() {
@@ -122,7 +123,7 @@ const Projects = () => {
 
   if (!user.isLoggedIn) {
     return <Navigate replace to='/' />
-  } else if (teamId === null) {
+  } else if (teamState === {}) {
     return <Navigate replace to='/teams' />
   } else {
     return (
@@ -134,7 +135,7 @@ const Projects = () => {
           <ArrowBackIosIcon />
           Back
         </Button>
-        <h1>Projects For Team </h1>
+        <h1>Projects For {teamState.name}</h1>
         <Button variant='outlined' onClick={handleNewOpen}>
           New
         </Button>
