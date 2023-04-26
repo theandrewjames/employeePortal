@@ -20,7 +20,7 @@ export const announcementsState = atom({
 
 export const companyState = atom({
     key: 'companyState',
-    default: []
+    default: {}
 });
 
 export const allUsersState = atom({
@@ -34,4 +34,9 @@ export const errorState = atom({
         isError: false,
         message: ''
     }
+});
+
+export const currentTeamState = atom({
+    key: 'currentTeamState',
+    default: {}
 });

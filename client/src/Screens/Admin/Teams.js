@@ -1,117 +1,156 @@
-import { Navigate } from "react-router-dom"
+import { Navigate, redirect } from "react-router-dom"
 import { useRecoilState } from "recoil"
 import NavBar from "../../Components/NavBar"
-import { userState } from "../../globalstate"
-import { companyState } from "../../globalstate"
+import { userState, companyState, currentTeamState } from "../../globalstate"
 import { Button, Card, CardContent, CardHeader } from "@mui/material"
 import CreateTeamOverlay from "../../Components/CreateTeamOverlay"
+import { useEffect, useState } from "react"
+import { getProjectsByTeam } from "../../Services/teams"
 
-const handleCreateNewTeam = () => {
-  console.log("Add new team")
+const cardStyle = {
+  width: "30%",
+  height: "300px",
 }
+
+const cardHeaderStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  margin: "1rem",
+}
+
+const cardContentStyle = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  // .MuiCardHeader-content
+}
+
+const teammateStyle = {
+  display: "flex",
+  flexWrap: 'wrap',
+  gap: '1rem',
+  justifyContent: 'space-between',
+  alignItems: 'space-evenly',
+}
+
+const newTeamCardContentStyle = {
+  height: '90%',
+  display: 'flex',
+  flexDirection: "column",
+  justifyContent: 'space-evenly',
+  alignItems: "center",
+}
+
+const userBtnStyle = {
+  width: '45%',
+}
+
 
 const Teams = () => {
   const [user, setUser] = useRecoilState(userState)
   const [company, setCompany] = useRecoilState(companyState)
+  const [currentTeam, setCurrentTeam] = useRecoilState(currentTeamState)
+  const [teamSelected, setTeamSelected] = useState(false)
+  const [teamProjectsCounts, setTeamProjectsCounts] = useState([])
 
-  const tempCompany = {
-    id: 1,
-    name: "Company 1",
-    description: "desc",
-    teams: [
-      {
-        id: 2,
-        name: "team1",
-        description: "team1 desc",
-        users: [
-          {
-            id: 4,
-            profile: {
-              firstname: "Peter",
-              lastname: "Luitjens",
-            },
-          },
-          {
-            id: 3,
-            profile: {
-              firstname: "Shilpa",
-              lastname: "Nair",
-            },
-          },
-          {
-            id: 1,
-            profile: {
-              firstname: "Dylan",
-              lastname: "Nguyen",
-            },
-          },
-          {
-            id: 2,
-            profile: {
-              firstname: "Jiwon",
-              lastname: "Shim",
-            },
-          },
-        ],
-      },
-      {
-        id: 3,
-        name: "team2",
-        description: "team2 desc",
-        users: [
-          {
-            id: 1,
-            profile: {
-              firstname: "Dylan",
-              lastname: "Nguyen",
-            },
-          },
-          {
-            id: 2,
-            profile: {
-              firstname: "Jiwon",
-              lastname: "Shim",
-            },
-          },
-        ],
-      },
-    ],
-    users: [],
+  useEffect(() => {
+    const teamIds = company?.teams?.map((team) => team.id)
+    console.log(teamIds)
+    teamIds?.forEach(async (teamId) => {
+      const projects = await getProjectsByTeam(company.id, teamId)
+      console.log(projects)
+      setTeamProjectsCounts([
+        ...teamProjectsCounts,
+        { teamId: teamId, projectsCount: "# of Projects: " + projects.length },
+      ])
+    })
+    console.log(company)
+    console.log(teamProjectsCounts)
+  }, [company])
+
+  const handleCardClick = (event) => {
+    console.log(event.currentTarget.dataset.id)
+    const team = company.teams.filter(
+      (team) => team.id == event.currentTarget.dataset.id
+    )
+    console.log(team)
+
+    setCurrentTeam(team)
+    setTeamSelected(true)
   }
+
+  const handleCreateNewTeam = () => {
+    console.log("Add new team")
+  }
+
+  console.log(company)
 
   if (!user.isLoggedIn) {
     return <Navigate replace to='/' />
+  } else if (company.length == 0) {
+    return <Navigate replace to='/company' />
   } else {
-    return (
-      <div style={{ height: '100%',
-        width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', }}>
+    return teamSelected ? (
+      <Navigate replace to='/projects' />
+    ) : (
+      <>
         <NavBar />
-        <h1 style={{ marginTop: "6vh" }}>Teams</h1>
-        {tempCompany.teams.map((team) => (
-          <Card key={team.id}>
-            <CardHeader title={team.name} subheader='# of Projects: 5' />
-            <CardContent>
-              <h3>Members</h3>
-              {team.users.map((user) => (
-                <Button
-                  key={user.id}
-                  variant='contained'
-                  href=''
-                  onClick={() => console.log("User clicked")}
-                >
-                  {user.profile.firstname} {user.profile.lastname.slice(0, 1)}.
-                </Button>
-              ))}
-            </CardContent>
-          </Card>
-        ))}
-        <Card onClick={handleCreateNewTeam}>
-          <CardContent>
-            <CreateTeamOverlay></CreateTeamOverlay>
-            <span>New Team</span>
-          </CardContent>
-        </Card>
-      </div>
+        <div
+          style={{
+            height: "94vh",
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            flexWrap: "wrap",
+            justifyContent: "flex-start",
+            alignItems: "center",
+          }}
+        >
+          <h1 style={{ marginTop: "6vh", color: "#1ba098" }}>Teams</h1>
+          <div
+            style={{
+              width: "80%",
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+              alignItems: "space-evenly",
+              rowGap: "5rem",
+            }}
+          >
+            {company?.teams?.map((team) => (
+              <Card
+                key={team.id}
+                data-id={team.id}
+                onClick={handleCardClick}
+                style={cardStyle}
+              >
+                <div style={cardHeaderStyle}>
+                  <h2>{team.name}</h2>
+                  <span>{teamProjectsCounts[0]?.projectsCount}</span>
+                </div>
+                <CardContent style={cardContentStyle}>
+                  <h3>Members</h3>
+                  <div style={teammateStyle}>
+                    {team?.teammates?.map((user) => (
+                      <Button key={user.id} variant='contained' style={userBtnStyle}>
+                        {user?.profile?.firstName}{" "}
+                        {user?.profile?.lastName?.slice(0, 1)}.
+                      </Button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            <Card onClick={handleCreateNewTeam} style={cardStyle}>
+              <CardContent style={newTeamCardContentStyle}>
+                <CreateTeamOverlay></CreateTeamOverlay>
+                <span>New Team</span>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </>
     )
   }
 }
