@@ -24,6 +24,7 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import {
   createProject,
+  getProjectById,
   getProjects,
   saveProject,
 } from '../../Services/projects'
@@ -35,11 +36,11 @@ const Projects = () => {
   const [newOpen, setNewOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [projects, setProjects] = useState([{}])
-  const [projectListUpdate, setProjectsListUpdate] = useState(false)
-  const [currentProject, setCurrentProject] = useState({})
+  const [projectListUpdate, setProjectsListUpdate] = useState(0)
+  const [currentProjectId, setCurrentProjectId] = useState(null)
   const [projectName, setProjectName] = useState('')
   const [description, setDescription] = useState('')
-  const [isActiveProject, setIsActiveProject] = useState(false)
+  const [isActiveProject, setIsActiveProject] = useState(null)
 
   useEffect(() => {
     async function fetchData() {
@@ -63,56 +64,69 @@ const Projects = () => {
     setNewOpen(false)
   }
 
-  const handleNewSubmit = () => {
-    //Create new project and send to database
-    createProject(
+  const handleNewSubmit = async () => {
+    await createProject(
       {
         name: projectName,
         description: description,
-        active: isActiveProject,
+        active: true,
         team: teamState,
       },
       {
         id: user.id,
         profile: user.profile,
-        isAdmin: user.isAdmine,
+        admin: user.admin,
         active: user.active,
         status: user.status,
       }
     )
     setProjectName('')
     setDescription('')
-    setProjectsListUpdate(!projectListUpdate)
+    setProjectsListUpdate(projectListUpdate + 1)
     setNewOpen(false)
   }
 
-  const handleEditOpen = (project) => {
+  const handleEditOpen = async (projectId) => {
     //Populate text with correct values and current project
-    setCurrentProject(project)
-    setProjectName(project.name)
-    setDescription(project.description)
-    setIsActiveProject(project.active)
+    const currentProject = await getProjectById(projectId)
+    setCurrentProjectId(projectId)
+    setProjectName(currentProject.name)
+    setDescription(currentProject.description)
+    setIsActiveProject(currentProject.active)
     setEditOpen(true)
   }
 
   const handleEditClose = () => {
     //Reset current project and text fields
-    setCurrentProject({})
+    setCurrentProjectId(null)
     setProjectName('')
     setDescription('')
     setEditOpen(false)
   }
 
-  const handleEditSave = () => {
+  const handleEditSave = async () => {
     //Edit project with correct id and send to database
-    setCurrentProject({
+    const currentProject = await getProjectById(currentProjectId)
+    console.log(currentProject)
+    console.log({
       ...currentProject,
       name: projectName,
       description: description,
       active: isActiveProject,
     })
-    saveProject(currentProject)
-    setProjectsListUpdate(!projectListUpdate)
+    console.log(
+      await saveProject({
+        ...currentProject,
+        name: projectName,
+        description: description,
+        active: isActiveProject,
+      })
+    )
+    setCurrentProjectId(null)
+    setProjectName('')
+    setDescription('')
+    setProjectsListUpdate(projectListUpdate + 1)
+    setEditOpen(false)
   }
 
   const handleProjectNameChange = (event) => {
@@ -129,7 +143,7 @@ const Projects = () => {
 
   if (!user.isLoggedIn) {
     return <Navigate replace to='/' />
-  } else if (teamState === {}) {
+  } else if (teamState === {} || !user.admin) {
     return <Navigate replace to='/teams' />
   } else {
     return (
@@ -189,7 +203,8 @@ const Projects = () => {
                   key={project.id}
                   secondaryAction={
                     <Button
-                      onClick={(project) => handleEditOpen(project)}
+                      value={project.id}
+                      onClick={() => handleEditOpen(project.id)}
                       edge='end'
                       aria-label='edit'
                     >
@@ -232,6 +247,7 @@ const Projects = () => {
               variant='standard'
               value={projectName}
               onChange={handleProjectNameChange}
+              defaultValue={projectName}
             />
             <TextField
               autoFocus
@@ -243,13 +259,14 @@ const Projects = () => {
               variant='standard'
               value={description}
               onChange={handleDescriptionChange}
+              defaultValue={description}
             />
           </DialogContent>
           <DialogTitle>Active?</DialogTitle>
           <InputLabel>Pick an option</InputLabel>
           <Select
-            value={isActiveProject}
             label='Pick an option'
+            value={isActiveProject === null ? '' : isActiveProject}
             onChange={handleActiveChange}
           >
             <MenuItem value={true}>Yes</MenuItem>

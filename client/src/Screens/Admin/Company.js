@@ -1,12 +1,12 @@
-import { Navigate, redirect } from "react-router-dom"
-import { useRecoilState } from "recoil"
-import { companyState, userState } from "../../globalstate"
-import InputLabel from "@mui/material/InputLabel"
-import MenuItem from "@mui/material/MenuItem"
-import FormControl from "@mui/material/FormControl"
-import Select from "@mui/material/Select"
-import { useEffect, useState } from "react"
-import styled from "styled-components"
+import { Navigate, redirect } from 'react-router-dom'
+import { useRecoilState } from 'recoil'
+import { companyState, userState } from '../../globalstate'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import FormControl from '@mui/material/FormControl'
+import Select from '@mui/material/Select'
+import { useEffect, useState } from 'react'
+import styled from 'styled-components'
 
 const Container = styled.div`
   display: flex;
@@ -35,18 +35,20 @@ const CompanyScreen = () => {
 
   const handleChange = (event) => {
     console.log(user)
-    setCompany(user.companies.filter(company => company.name == event.target.value)[0])
+    setCompany(
+      user.companies.filter((company) => company.name === event.target.value)[0]
+    )
     setCompanySelected(true)
     console.log(company)
   }
 
   if (!user.isLoggedIn) {
-    return <Navigate replace to="/" />
+    return <Navigate replace to='/' />
   } else if (!user.isAdmin) {
-    return <Navigate replace to="/announcements" />
+    return <Navigate replace to='/announcements' />
   } else {
     return companySelected ? (
-      <Navigate replace to="/announcements" />
+      <Navigate replace to='/announcements' />
     ) : (
       <Container>
         <Title>Select Company</Title>
@@ -54,7 +56,7 @@ const CompanyScreen = () => {
           <InputLabel>Pick a company</InputLabel>
           <Select
             value={company}
-            label="Pick a company"
+            label='Pick a company'
             onChange={handleChange}
           >
             {user.companies.map((companyDto) => (
