@@ -35,3 +35,8 @@ export const errorState = atom({
         message: ''
     }
 });
+
+export const currentTeamState = atom({
+    key: 'currentTeamState',
+    default: {}
+});
