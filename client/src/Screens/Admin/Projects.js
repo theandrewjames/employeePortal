@@ -1,32 +1,27 @@
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import NavBar from '../../Components/NavBar'
-import { currentTeamState, userState } from '../../globalstate'
-import { cloneElement, useEffect, useState } from 'react'
+import { companyState, currentTeamState, userState } from '../../globalstate'
+import { useEffect, useState } from 'react'
 import {
-  Avatar,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Grid,
   IconButton,
   InputLabel,
   List,
   ListItem,
-  ListItemAvatar,
   ListItemText,
   MenuItem,
   Select,
   TextField,
-  Typography,
 } from '@mui/material'
 
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
-import { styled } from '@mui/material/styles'
 import {
   createProject,
   getProjects,
@@ -34,11 +29,9 @@ import {
 } from '../../Services/projects'
 
 const Projects = () => {
-  const Demo = styled('div')(({ theme }) => ({
-    backgroundColor: theme.palette.background.paper,
-  }))
-
   const [user, setUser] = useRecoilState(userState)
+  const [teamState, setTeamState] = useRecoilState(currentTeamState)
+  const [company, setCompany] = useRecoilState(companyState)
   const [newOpen, setNewOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [projects, setProjects] = useState([{}])
@@ -47,15 +40,14 @@ const Projects = () => {
   const [projectName, setProjectName] = useState('')
   const [description, setDescription] = useState('')
   const [isActiveProject, setIsActiveProject] = useState(false)
-  const [teamState, setTeamState] = useRecoilState(currentTeamState)
 
   useEffect(() => {
     async function fetchData() {
-      const data = await getProjects()
+      const data = await getProjects(company.id, teamState.id)
       setProjects(data)
     }
     fetchData()
-  }, [projectListUpdate])
+  }, [projectListUpdate, company, teamState])
 
   const handleNewOpen = () => {
     //Empty text fields
@@ -73,7 +65,21 @@ const Projects = () => {
 
   const handleNewSubmit = () => {
     //Create new project and send to database
-    createProject()
+    createProject(
+      {
+        name: projectName,
+        description: description,
+        active: isActiveProject,
+        team: teamState,
+      },
+      {
+        id: user.id,
+        profile: user.profile,
+        isAdmin: user.isAdmine,
+        active: user.active,
+        status: user.status,
+      }
+    )
     setProjectName('')
     setDescription('')
     setProjectsListUpdate(!projectListUpdate)
@@ -132,8 +138,10 @@ const Projects = () => {
         <br />
         <br />
         <Button>
-          <ArrowBackIosIcon />
-          Back
+          <Link to='/teams'>
+            <ArrowBackIosIcon />
+            Back
+          </Link>
         </Button>
         <h1>Projects For {teamState.name}</h1>
         <Button variant='outlined' onClick={handleNewOpen}>
@@ -174,7 +182,7 @@ const Projects = () => {
           </DialogActions>
         </Dialog>
         <Grid item xs={12} md={6}>
-          <Demo>
+          <div>
             <List dense={false}>
               {projects.map((project) => (
                 <ListItem
@@ -205,7 +213,7 @@ const Projects = () => {
                 </ListItem>
               ))}
             </List>
-          </Demo>
+          </div>
         </Grid>
         <Dialog open={editOpen} onClose={handleEditClose}>
           <DialogActions>
@@ -237,7 +245,8 @@ const Projects = () => {
               onChange={handleDescriptionChange}
             />
           </DialogContent>
-          <InputLabel>Pick a company</InputLabel>
+          <DialogTitle>Active?</DialogTitle>
+          <InputLabel>Pick an option</InputLabel>
           <Select
             value={isActiveProject}
             label='Pick an option'

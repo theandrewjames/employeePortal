@@ -7,10 +7,10 @@ export const getProjects = async (companyId, teamId) => {
   return response.data
 }
 
-export const createProject = async (basicUserDto) => {
+export const createProject = async (projectDto, basicUserDto) => {
   const response = await api.post(`/projects`, {
-    project: { name: 'name', description: 'dasd', active: true, team: {} },
-    user: { basicUserDto },
+    project: projectDto,
+    user: basicUserDto,
   })
   return response.data
 }
