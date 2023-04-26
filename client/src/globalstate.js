@@ -20,7 +20,7 @@ export const announcementsState = atom({
 
 export const companyState = atom({
     key: 'companyState',
-    default: []
+    default: {}
 });
 
 export const allUsersState = atom({

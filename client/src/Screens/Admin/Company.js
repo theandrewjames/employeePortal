@@ -33,13 +33,9 @@ const CompanyScreen = () => {
   const [company, setCompany] = useRecoilState(companyState)
   const [companySelected, setCompanySelected] = useState(false)
 
-  useEffect(() => {
-    setCompany([])
-  }, [])
-
   const handleChange = (event) => {
     console.log(user)
-    setCompany(user.companies)
+    setCompany(user.companies.filter(company => company.name == event.target.value)[0])
     setCompanySelected(true)
     console.log(company)
   }
