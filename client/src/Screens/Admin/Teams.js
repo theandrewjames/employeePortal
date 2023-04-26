@@ -19,10 +19,12 @@ const Teams = () => {
     console.log(teamIds)
     teamIds?.forEach(async (teamId) => {
       const projects = await getProjectsByTeam(company[0].id, teamId)
+      console.log(projects)
       setTeamProjectsCounts([...teamProjectsCounts, { teamId: teamId, projectsCount: '# of Projects: ' + projects.length }])
     })
     console.log(company)
-  }, [company])
+    console.log(teamProjectsCounts)
+  }, [company, teamProjectsCounts])
 
   const handleCardClick = (event) => {
     console.log(event.currentTarget.dataset.id)
@@ -39,8 +41,12 @@ const Teams = () => {
     console.log("Add new team")
   }
 
+  console.log(company)
+
   if (!user.isLoggedIn) {
     return <Navigate replace to='/' />
+  } else if (company.length == 0) {
+    return <Navigate replace to='/company' />
   } else {
     return teamSelected ? (
       <Navigate replace to='/projects' />
