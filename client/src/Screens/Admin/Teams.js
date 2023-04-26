@@ -15,22 +15,22 @@ const Teams = () => {
   const [teamProjectsCounts, setTeamProjectsCounts] = useState([])
 
   useEffect(() => {
-    const teamIds = company[0]?.teams?.map((team) => team.id)
+    const teamIds = company?.teams?.map((team) => team.id)
     console.log(teamIds)
     teamIds?.forEach(async (teamId) => {
-      const projects = await getProjectsByTeam(company[0].id, teamId)
+      const projects = await getProjectsByTeam(company.id, teamId)
       console.log(projects)
       setTeamProjectsCounts([...teamProjectsCounts, { teamId: teamId, projectsCount: '# of Projects: ' + projects.length }])
     })
     console.log(company)
     console.log(teamProjectsCounts)
-  }, [company, teamProjectsCounts])
+  }, [company])
 
   const handleCardClick = (event) => {
     console.log(event.currentTarget.dataset.id)
-    const team = company[0].teams.filter(
+    const team = company.teams.filter(
       (team) => team.id == event.currentTarget.dataset.id
-    )[0]
+    )
     console.log(team)
 
     setCurrentTeam(team)
@@ -62,7 +62,7 @@ const Teams = () => {
       >
         <NavBar />
         <h1 style={{ marginTop: "6vh" }}>Teams</h1>
-        {company[0]?.teams?.map((team) => (
+        {company?.teams?.map((team) => (
           <Card key={team.id} data-id={team.id} onClick={handleCardClick}>
             <CardHeader title={team.name} subheader={teamProjectsCounts[0]?.projectsCount} />
             <CardContent>

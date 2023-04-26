@@ -28,15 +28,12 @@ const CreateTeamOverlay = () => {
     console.log("info: ", teamName, description, selectedMembers)
 
     const teamDto = {
-      company: company,
-      team: {
         name: teamName,
         description: description,
-        users: selectedMembers,
-      },
+        teammates: selectedMembers,
     }
     console.log(teamDto)
-    createTeam(user.id, company[0].id, teamDto)
+    createTeam(user.id, company.id, teamDto)
     setOpen(false)
   }
 
@@ -192,7 +189,7 @@ const CreateTeamOverlay = () => {
               label='Pick an option'
               onChange={handleChange}
             >
-              {company[0]?.employees?.map((employee) => (
+              {company?.employees?.map((employee) => (
                 <MenuItem key={employee.id} value={employee}>
                   {employee.profile.firstName}{" "}
                   {employee.profile.lastName?.slice(0, 1)}.
