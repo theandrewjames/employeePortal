@@ -7,8 +7,13 @@ import SignUp from "../../Components/SignUp";
 import UsersTable from "../../Components/UsersTable";
 import styled from "styled-components";
 import { useRecoilState } from "recoil";
-import { allUsersState, userState } from "../../globalstate";
-import { getAllUsers } from "../../Services/users";
+import {
+  allUsersState,
+  companyState,
+  errorState,
+  userState,
+} from "../../globalstate";
+import { createUser, getAllUsers } from "../../Services/users";
 
 const Title = styled.h1`
   font-weight: bold;
@@ -26,11 +31,60 @@ const Container = styled.div`
   height: 100vh;
 `;
 
+const initialFormState = {
+  firstName: {
+    value: "",
+    placeholder: "First Name",
+    type: "text",
+  },
+  lastName: {
+    value: "",
+    placeholder: "Last Name",
+    type: "text",
+  },
+  email: {
+    value: "",
+    placeholder: "Email",
+    type: "email",
+  },
+  phone: {
+    value: "",
+    placeholder: "123-456-7890",
+    type: "tel",
+    pattern: "[0-9]{3}-[0-9]{3}-[0-9]{4}",
+  },
+  username: {
+    value: "",
+    placeholder: "Username",
+    type: "text",
+  },
+  password: {
+    value: "",
+    placeholder: "Password",
+    type: "password",
+  },
+  confirmPassword: {
+    value: "",
+    placeholder: "Confirm Password",
+    type: "password",
+  },
+  admin: {
+    value: false,
+    placeholder: "Admin",
+    type: "text",
+  },
+};
+
 const Users = () => {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useRecoilState(userState);
   const [users, setUsers] = useRecoilState(allUsersState);
+  const [company, setCompany] = useRecoilState(companyState);
   const [userIsAdmin, setUserIsAdmin] = useState(false);
+  const [form, setForm] = useState(initialFormState);
+  const [formError, setFormError] = useRecoilState(errorState);
+  const [allUsers, setAllUsers] = useState([]);
+  const resetError = () => setFormError(errorState);
   const [userInfo, setUserInfo] = useState({
     firstName: "",
     lastName: "",
@@ -42,57 +96,42 @@ const Users = () => {
     isAdmin: false,
   });
 
-  const inputs = [
-    {
-      id: 1,
-      name: "firstName",
-      type: "text",
-      placeholder: "First Name",
-      label: "First Name",
-    },
-    {
-      id: 2,
-      name: "lastName",
-      type: "text",
-      placeholder: "Last Name",
-      label: "Last Name",
-    },
-    {
-      id: 3,
-      name: "email",
-      type: "text",
-      placeholder: "Email",
-      label: "Email",
-    },
-    {
-      id: 4,
-      name: "phone",
-      type: "text",
-      placeholder: "Phone",
-      label: "Phone",
-    },
-    {
-      id: 5,
-      name: "username",
-      type: "username",
-      placeholder: "Username",
-      label: "Username",
-    },
-    {
-      id: 6,
-      name: "password",
-      type: "password",
-      placeholder: "Password",
-      label: "Password",
-    },
-    {
-      id: 7,
-      name: "confirmPassword",
-      type: "password",
-      placeholder: "Confirm Password",
-      label: "Confirm Password",
-    },
-  ];
+  const formIsValid = () => {
+    if (
+      !form.firstName.value ||
+      !form.lastName.value ||
+      !form.email.value ||
+      !form.phone.value
+    ) {
+      setFormError({
+        ...formError,
+        isError: true,
+        message: "All fields are required",
+      });
+      return false;
+    } else if (
+      !form.email.value.match(
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+      )
+    ) {
+      setFormError({
+        ...formError,
+        isError: true,
+        message: "Email must be in format a-z@a-z.com",
+        field: "email",
+      });
+    } else if (form.password.value !== form.confirmPassword.value) {
+      setFormError({
+        ...formError,
+        isError: true,
+        message: "Passwords doen't match",
+        field: "password",
+      });
+    }
+    return true;
+  };
+
+  const COMPANY_ID = company.id;
 
   const handleOpen = () => {
     setOpen(true);
@@ -112,17 +151,24 @@ const Users = () => {
 
   const handleSignUp = (e) => {
     e.preventDefault();
-    console.log(userInfo);
-  };
+    console.log(form);
 
-  const getUsers = () => {
-    getAllUsers(6).then((result) => {
-      setUsers(result);
-    });
+    if (formIsValid()) {
+      createUser(COMPANY_ID, form)
+        .then((data) => {
+          setForm(initialFormState);
+          setUsers([...users, data]);
+          // setAllUsers([...allUsers, response]);
+        })
+        .catch((error) => console.log(error));
+    }
   };
 
   useEffect(() => {
-    getUsers();
+    console.log(company);
+    getAllUsers(COMPANY_ID).then((data) => {
+      setUsers(data);
+    });
   }, []);
 
   const handleName = (profile) => {
@@ -144,20 +190,17 @@ const Users = () => {
             <Title>User Registry</Title>
             <div>A general view of all your members in your orginization</div>
           </div>
-          <UsersTable
-            rows={users}
-            handleOpen={handleOpen}
-            handleName={handleName}
-          />
+          <UsersTable handleOpen={handleOpen} handleName={handleName} />
           <Modal open={open} onClose={handleClose}>
             <SignUp
               handleChange={handleChange}
               handleSignUp={handleSignUp}
-              inputs={inputs}
               userInfo={userInfo}
-              setUserInfo={setUserInfo}
-              userIsAdmin={userIsAdmin}
               setUserIsAdmin={setUserIsAdmin}
+              form={form}
+              setForm={setForm}
+              formError={formError}
+              resetError={resetError}
             />
           </Modal>
         </Container>

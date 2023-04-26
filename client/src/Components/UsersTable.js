@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material";
+import { useRecoilState } from "recoil";
+import { allUsersState } from "../globalstate";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -26,7 +28,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const UsersTable = (props) => {
-  const { rows, handleOpen, handleName } = props;
+  const { handleOpen, handleName } = props;
+  const [users, setUsers] = useRecoilState(allUsersState);
   return (
     <Fragment>
       <TableContainer
@@ -44,26 +47,24 @@ const UsersTable = (props) => {
             <TableRow style={{ border: "#DEB992 solid 1px" }}>
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell>Email</StyledTableCell>
-              {/* <StyledTableCell>Team</StyledTableCell> */}
               <StyledTableCell>Active</StyledTableCell>
               <StyledTableCell>Admin</StyledTableCell>
               <StyledTableCell>Status</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.name}>
-                <StyledTableCell>{handleName(row.profile)}</StyledTableCell>
-                <StyledTableCell>{row.profile.email}</StyledTableCell>
-                {/* <StyledTableCell>{row.team}</StyledTableCell> */}
+            {users.map((user) => (
+              <StyledTableRow key={user.name}>
+                <StyledTableCell>{handleName(user.profile)}</StyledTableCell>
+                <StyledTableCell>{user.profile.email}</StyledTableCell>
                 <StyledTableCell>
-                  {row.active === true ? "YES" : "NO"}
+                  {user.active === true ? "YES" : "NO"}
                 </StyledTableCell>
                 <StyledTableCell>
-                  {row.admin === true ? "YES" : "NO"}
+                  {user.admin === true ? "YES" : "NO"}
                 </StyledTableCell>
                 <StyledTableCell>
-                  {row.status === true ? "JOINED" : "PENDING"}
+                  {user.status === true ? "JOINED" : "PENDING"}
                 </StyledTableCell>
               </StyledTableRow>
             ))}

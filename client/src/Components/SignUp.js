@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import React from "react";
+import React, { Fragment } from "react";
 import styled from "styled-components";
 
 const Form = styled.form`
@@ -47,11 +47,21 @@ const styledModal = {
   transition: "transform 0.6s ease-in-out",
   textAlign: "center",
   zIndex: 100,
+  width: "50%",
+  height: "70%",
 };
 
 const SignUp = (props) => {
-  const { handleChange, handleSignUp, inputs, userInfo, setUserIsAdmin } =
-    props;
+  const {
+    handleChange,
+    handleSignUp,
+    userInfo,
+    setUserIsAdmin,
+    form,
+    setForm,
+    formError,
+    resetError,
+  } = props;
   const options = ["False", "True"];
 
   const handleSelect = (event) => {
@@ -61,8 +71,8 @@ const SignUp = (props) => {
   };
 
   return (
-    <Box sx={{ ...styledModal, width: "50%", height: "70%" }}>
-      <Form onSubmit={handleSignUp}>
+    <Box sx={{ ...styledModal }}>
+      {/* <Form onSubmit={handleSignUp}>
         {inputs.map((input) => (
           <Input
             key={input.id}
@@ -81,8 +91,52 @@ const SignUp = (props) => {
             })}
           </select>
         </div>
-
         <Button>Submit</Button>
+      </Form> */}
+      <Form>
+        {Object.entries(form).map(([key, props]) => (
+          <Fragment>
+            <Input
+              key={key}
+              {...props}
+              onChange={(e) => {
+                console.log(form);
+                setForm({
+                  ...form,
+                  [key]: { ...props, value: e.target.value },
+                });
+                resetError();
+              }}
+            />
+            {formError.isError && formError.field === key ? (
+              <p
+                style={{
+                  color: "palevioletred",
+                  width: "100%",
+                  textAlign: "center",
+                }}
+              >
+                {formError.message}
+              </p>
+            ) : (
+              ""
+            )}
+          </Fragment>
+        ))}
+        <Button>Sign Up</Button>
+        {formError.isError && !formError.field ? (
+          <p
+            style={{
+              color: "palevioletred",
+              width: "100%",
+              textAlign: "center",
+            }}
+          >
+            {formError.message}
+          </p>
+        ) : (
+          ""
+        )}
       </Form>
     </Box>
   );
