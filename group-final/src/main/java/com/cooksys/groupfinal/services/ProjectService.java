@@ -15,5 +15,5 @@ public interface ProjectService {
 
     List<ProjectDto> getAllProjects();
 
-    ProjectDto updateActiveProject(Long projectId, ProjectDto projectDto);
+    ProjectDto updateProject(Long projectId, ProjectDto projectDto);
 }
