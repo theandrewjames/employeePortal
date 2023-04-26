@@ -27,6 +27,11 @@ public class TeamController {
 	public TeamDto createTeam(@PathVariable Long authorId, @PathVariable Long companyId, @RequestBody TeamDto teamDto) {
 		return teamService.createTeam(authorId,companyId, teamDto);
 	}
+	@GetMapping("/{teamId}")
+	@CrossOrigin(origins="*")
+	public TeamDto getTeamById(@PathVariable Long teamId) {
+		return teamService.getTeamById(teamId);
+	}
 
 	@DeleteMapping("/{teamId}")
 	@CrossOrigin(origins="*")
