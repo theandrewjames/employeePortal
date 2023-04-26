@@ -84,7 +84,7 @@ const Announcements = () => {
       setCompAnnouncements(data)
     }
     fetchData()
-  }, [announcementUpdate])
+  }, [announcementUpdate, company.id])
 
   const handleNewAnnoucement = () => {
     setOpenNewDialog(true)

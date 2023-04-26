@@ -107,21 +107,14 @@ const Projects = () => {
   const handleEditSave = async () => {
     //Edit project with correct id and send to database
     const currentProject = await getProjectById(currentProjectId)
-    console.log(currentProject)
-    console.log({
+
+    await saveProject({
       ...currentProject,
       name: projectName,
       description: description,
       active: isActiveProject,
     })
-    console.log(
-      await saveProject({
-        ...currentProject,
-        name: projectName,
-        description: description,
-        active: isActiveProject,
-      })
-    )
+
     setCurrentProjectId(null)
     setProjectName('')
     setDescription('')
@@ -143,7 +136,7 @@ const Projects = () => {
 
   if (!user.isLoggedIn) {
     return <Navigate replace to='/' />
-  } else if (teamState === {} || !user.admin) {
+  } else if (teamState === {}) {
     return <Navigate replace to='/teams' />
   } else {
     return (
@@ -158,9 +151,11 @@ const Projects = () => {
           </Link>
         </Button>
         <h1>Projects For {teamState.name}</h1>
-        <Button variant='outlined' onClick={handleNewOpen}>
-          New
-        </Button>
+        {user.admin && (
+          <Button variant='outlined' onClick={handleNewOpen}>
+            New
+          </Button>
+        )}
         <Dialog open={newOpen} onClose={handleNewClose}>
           <DialogActions>
             <IconButton onClick={handleNewClose}>

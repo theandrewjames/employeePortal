@@ -55,17 +55,13 @@ const Teams = () => {
 
   useEffect(() => {
     const teamIds = company?.teams?.map((team) => team.id)
-    // console.log(teamIds)
     teamIds?.forEach(async (teamId) => {
       const projects = await getProjectsByTeam(company.id, teamId)
-      // console.log(projects)
       setTeamProjectsCounts([
         ...teamProjectsCounts,
         { teamId: teamId, projectsCount: '# of Projects: ' + projects.length },
       ])
     })
-    // console.log(company)
-    // console.log(teamProjectsCounts)
   }, [company])
 
   const handleCardClick = async (event) => {
@@ -81,7 +77,7 @@ const Teams = () => {
 
   if (!user.isLoggedIn) {
     return <Navigate replace to='/' />
-  } else if (company.length == 0) {
+  } else if (company.length === 0) {
     return <Navigate replace to='/company' />
   } else {
     return teamSelected ? (

@@ -33,13 +33,13 @@ const CompanyScreen = () => {
   const [company, setCompany] = useRecoilState(companyState)
   const [companySelected, setCompanySelected] = useState(false)
 
+  useEffect(() => {
+    setCompany(null)
+  }, [])
+
   const handleChange = (event) => {
-    console.log(user)
-    setCompany(
-      user.companies.filter((company) => company.name === event.target.value)[0]
-    )
+    setCompany(event.target.value)
     setCompanySelected(true)
-    console.log(company)
   }
 
   if (!user.isLoggedIn) {
@@ -55,12 +55,12 @@ const CompanyScreen = () => {
         <FormContainer>
           <InputLabel>Pick a company</InputLabel>
           <Select
-            value={company}
+            value={company === null ? '' : company}
             label='Pick a company'
             onChange={handleChange}
           >
             {user.companies.map((companyDto) => (
-              <MenuItem key={companyDto.id} value={companyDto.name}>
+              <MenuItem key={companyDto.id} value={companyDto}>
                 {companyDto.name}
               </MenuItem>
             ))}
