@@ -63,6 +63,7 @@ const Login = () => {
         id: response.id,
         profile: response.profile,
         isAdmin: response.admin,
+        admin: response.admin,
         active: response.active,
         status: response.status,
         companies: response.companies,

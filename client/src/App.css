@@ -1,4 +1,7 @@
 .App {
+  height: 100vh;
+  width: 100vw;
+  background: #051622;
   text-align: center;
 }
 
@@ -35,4 +38,9 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.route-container {
+  width: 100%;
+  height: 100%;
 }

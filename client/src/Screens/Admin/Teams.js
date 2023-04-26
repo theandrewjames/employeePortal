@@ -1,21 +1,79 @@
-import { Navigate } from "react-router-dom"
+import { Navigate, redirect } from "react-router-dom"
 import { useRecoilState } from "recoil"
 import NavBar from "../../Components/NavBar"
-import { userState } from "../../globalstate"
+import { userState, companyState, currentTeamState } from "../../globalstate"
+import { Button, Card, CardContent, CardHeader } from "@mui/material"
+import CreateTeamOverlay from "../../Components/CreateTeamOverlay"
+import { useEffect, useState } from "react"
+
+const handleCreateNewTeam = () => {
+  console.log("Add new team")
+}
 
 const Teams = () => {
-    const [user, setUser] = useRecoilState(userState)
+  const [user, setUser] = useRecoilState(userState)
+  const [company, setCompany] = useRecoilState(companyState)
+  const [currentTeam, setCurrentTeam] = useRecoilState(currentTeamState)
+  const [teamSelected, setTeamSelected] = useState(false)
 
-    if (!user.isLoggedIn) {
-        return <Navigate replace to="/" />
-    } else {
-        return (
-            <div>
-                <NavBar />
-                <h1>Teams</h1>
-            </div>
-        )
-    }
+  useEffect(() => {
+    console.log(company)
+    console.log(currentTeam)
+  }, [company, currentTeam, setCurrentTeam])
+
+  const handleCardClick = (event) => {
+    console.log(event.currentTarget.dataset.id)
+    const team = company[0].teams.filter(
+        (team) => team.id == event.currentTarget.dataset.id
+      )[0]
+    console.log(team)
+
+    setCurrentTeam(
+      team
+    )
+    setTeamSelected(true)
+  }
+
+  if (!user.isLoggedIn) {
+    return <Navigate replace to='/' />
+  } else {
+    return teamSelected ? (
+      <Navigate replace to='/projects' />
+    ) : (
+      <div
+        style={{
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
+        <NavBar />
+        <h1 style={{ marginTop: "6vh" }}>Teams</h1>
+        {company[0]?.teams?.map((team) => (
+          <Card key={team.id} data-id={team.id} onClick={handleCardClick}>
+            <CardHeader title={team.name} subheader='# of Projects: 5' />
+            <CardContent>
+              <h3>Members</h3>
+              {team?.teammates?.map((user) => (
+                <Button key={user.id} variant='contained'>
+                  {user?.profile?.firstName}{" "}
+                  {user?.profile?.lastName?.slice(0, 1)}.
+                </Button>
+              ))}
+            </CardContent>
+          </Card>
+        ))}
+        <Card onClick={handleCreateNewTeam}>
+          <CardContent>
+            <CreateTeamOverlay></CreateTeamOverlay>
+            <span>New Team</span>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 }
 
 export default Teams
