@@ -8,7 +8,7 @@ import DialogContentText from "@mui/material/DialogContentText"
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material"
 import { useRecoilState } from "recoil"
 import { companyState, userState } from "../globalstate"
-import { display } from "@mui/system"
+import { display, width } from "@mui/system"
 import api from "../Services/api"
 import { createTeam } from "../Services/teams"
 
@@ -53,107 +53,9 @@ const CreateTeamOverlay = () => {
     )
   }
 
-  // React.useEffect(() => {
-  //   console.log(selectedMembers)
-  // }, [selectedMembers])
-
-  // const tempCompany = {
-  //   id: 1,
-  //   name: "Company 1",
-  //   description: "desc",
-  //   teams: [
-  //     {
-  //       id: 2,
-  //       name: "team1",
-  //       description: "team1 desc",
-  //       users: [
-  //         {
-  //           id: 4,
-  //           profile: {
-  //             firstname: "Peter",
-  //             lastname: "Luitjens",
-  //           },
-  //         },
-  //         {
-  //           id: 3,
-  //           profile: {
-  //             firstname: "Shilpa",
-  //             lastname: "Nair",
-  //           },
-  //         },
-  //         {
-  //           id: 1,
-  //           profile: {
-  //             firstname: "Dylan",
-  //             lastname: "Nguyen",
-  //           },
-  //         },
-  //         {
-  //           id: 2,
-  //           profile: {
-  //             firstname: "Jiwon",
-  //             lastname: "Shim",
-  //           },
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       id: 3,
-  //       name: "team2",
-  //       description: "team2 desc",
-  //       users: [
-  //         {
-  //           id: 1,
-  //           profile: {
-  //             firstname: "Dylan",
-  //             lastname: "Nguyen",
-  //           },
-  //         },
-  //         {
-  //           id: 2,
-  //           profile: {
-  //             firstname: "Jiwon",
-  //             lastname: "Shim",
-  //           },
-  //         },
-  //       ],
-  //     },
-  //   ],
-  //   users: [
-  //     {
-  //       id: 4,
-  //       profile: {
-  //         firstname: "Peter",
-  //         lastname: "Luitjens",
-  //       },
-  //     },
-  //     {
-  //       id: 3,
-  //       profile: {
-  //         firstname: "Shilpa",
-  //         lastname: "Nair",
-  //       },
-  //     },
-  //     {
-  //       id: 1,
-  //       profile: {
-  //         firstname: "Dylan",
-  //         lastname: "Nguyen",
-  //       },
-  //     },
-  //     {
-  //       id: 2,
-  //       profile: {
-  //         firstname: "Jiwon",
-  //         lastname: "Shim",
-  //       },
-  //     },
-  //   ],
-  // };
-
   return (
-    <div>
-      <Button variant='text' onClick={handleClickOpen}>
+    <div style={{width: '100%'}}>
+      <Button variant='text' onClick={handleClickOpen} style={{fontSize: '8rem', width: '100%'}}>
         +
       </Button>
       <Dialog open={open} onClose={handleClose}>

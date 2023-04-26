@@ -105,7 +105,8 @@ const NavBar = () => {
     //     </Drawer>
     // </div>
 
-    <Box style={{ height: "6vh", color: "#1ba098", background: "#051622" }}>
+    <Box style={{ color: "#1ba098", background: "#051622" }}> 
+    {/* height: "6vh", */}
       <AppBar position="static">
         <Toolbar
           variant="dense"
