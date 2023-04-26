@@ -88,7 +88,7 @@ const Teams = () => {
 
   if (!user.isLoggedIn) {
     return <Navigate replace to='/' />
-  } else if (company.length == 0) {
+  } else if (Object.keys(company).length == 0) {
     return <Navigate replace to='/company' />
   } else {
     return teamSelected ? (

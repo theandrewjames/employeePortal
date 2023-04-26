@@ -16,6 +16,7 @@ import { AppBar, Toolbar, Typography } from "@mui/material"
 
 const NavBar = () => {
   const [user, setUser] = useRecoilState(userState)
+  const [isAdmin, setIsAdmin] = React.useState(user.admin)
   const [state, setState] = React.useState({
     top: false,
     left: false,
@@ -39,7 +40,7 @@ const NavBar = () => {
 
   const list = () => (
     <Box
-      role="presentation"
+      role='presentation'
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
@@ -79,7 +80,7 @@ const NavBar = () => {
               localStorage.clear()
             }}
           >
-            <ListItemText style={{ color: "#1ba098" }} primary="Logout" />
+            <ListItemText style={{ color: "#1ba098" }} primary='Logout' />
           </ListItemButton>
         </ListItem>
       </List>
@@ -105,48 +106,57 @@ const NavBar = () => {
     //     </Drawer>
     // </div>
 
-    <Box style={{ color: "#1ba098", background: "#051622" }}> 
-    {/* height: "6vh", */}
-      <AppBar position="static">
+    <Box style={{ color: "#1ba098", background: "#051622" }}>
+      {/* height: "6vh", */}
+      <AppBar position='static'>
         <Toolbar
-          variant="dense"
+          variant='dense'
           style={{
+            width: 'calc(100% - 5px)',
             background: "#051622",
             display: "flex",
-            justifyContent: "flex-end",
+            justifyContent: "space-between",
             border: "2px solid #DEB992",
+            padding: '0'
           }}
         >
+          <div style={{ width: "5%", marginLeft: '2rem'}}>
+            <img src='logo.png' style={{ width: "4rem" }} />
+          </div>
+          <div style={{ width: "15%", color: 'red'  }}>
+            {isAdmin && <span>ACTING AS ADMIN</span>}
+          </div>
           <List
-            style={{ textAlign: "center", background: "#051622" }}
+            style={{ textAlign: "center", background: "#051622"}}
             sx={{
               width: "50%",
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-evenly",
+              marginRight: '2rem'
             }}
           >
             {["Home", "Company", "Teams", "Users"].map((text, index) => (
-              <ListItem key={text}>
+              <ListItem key={text} style={{width: "15%", flex: '0 2 auto'}}>
                 <Link
                   to={
                     text.toLowerCase() === "home"
                       ? "/announcements"
                       : "/" + text.toLowerCase()
                   }
-                  style={{ textDecoration: "none", color: "black" }}
+                  style={{ textDecoration: "none", color: "black"}}
                 >
-                  <ListItemButton sx={{ width: "20%", paddingRight: "2vw" }}>
+                  <ListItemButton sx={{ width: "15%"}}>
                     <ListItemText
                       style={{ color: "#1ba098" }}
-                      primaryTypographyProps={{ fontSize: "35px" }}
+                      primaryTypographyProps={{ fontSize: "2em" }}
                       primary={text}
                     />
                   </ListItemButton>
                 </Link>
               </ListItem>
             ))}
-            <ListItem key={"logout"} sx={{ width: "10vw" }}>
+            <ListItem key={"logout"} sx={{ width: "10%" }}>
               <ListItemButton
                 sx={{ width: "100%", textAlign: "center", paddingRight: "2vw" }}
                 onClick={() => {
@@ -156,8 +166,8 @@ const NavBar = () => {
               >
                 <ListItemText
                   style={{ color: "#1ba098" }}
-                  primaryTypographyProps={{ fontSize: "35px" }}
-                  primary="Logout"
+                  primaryTypographyProps={{ fontSize: "2em" }}
+                  primary='Logout'
                 />
               </ListItemButton>
             </ListItem>
