@@ -124,6 +124,7 @@ public class CompanyServiceImpl implements CompanyService {
 		if(company.getEmployees().contains(user)) {
 			throw new BadRequestException("This user already exists");
 		}
+		user.setActive(true);
 		userRepository.saveAndFlush(user);
 		company.getEmployees().add(user);
 		companyRepository.saveAndFlush(company);
@@ -135,6 +136,7 @@ public class CompanyServiceImpl implements CompanyService {
 	public AnnouncementDto createAnnouncement(AnnouncementRequestDto announcementRequestDto, Long id) {
 		
 		if (!announcementRequestDto.getAuthor().isAdmin()) {
+
 			throw new NotAuthorizedException("You are not authorized to post this announcement.");
 		}
 
@@ -151,12 +153,11 @@ public class CompanyServiceImpl implements CompanyService {
 	@Override
 	public void deleteUser(Long id, Long userId) {
 		Optional<User> user = userRepository.findById(userId);
-		Company company = findCompany(id);
 		if(!user.isPresent()) {
 			throw new BadRequestException("No user found");
 		}
-		company.getEmployees().remove(user.get());
-		companyRepository.saveAndFlush(company);
+		user.get().setActive(false);
+		userRepository.saveAndFlush(user.get());
 	}
 
 }
