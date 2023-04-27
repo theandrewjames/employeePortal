@@ -8,42 +8,69 @@ import { useEffect, useState } from "react"
 import { getProjectsByTeam, getTeamById } from "../../Services/teams"
 
 const cardStyle = {
-  width: "30%",
-  height: "300px",
+  // width: "30%",
+  // height: "300px",
+  width: "313px",
+  height: "241px",
+  background: "#0B2D45",
+  boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.45)",
+  borderRadius: "20px",
+  cursor: "pointer",
 }
 
 const cardHeaderStyle = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  margin: "1rem",
+  margin: "0 1rem",
 }
 
 const cardContentStyle = {
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  // .MuiCardHeader-content
+  borderTop: "1px solid #DEB992",
 }
 
 const teammateStyle = {
+  width: "80%",
   display: "flex",
   flexWrap: "wrap",
-  gap: "1rem",
+  gap: "1.3rem",
   justifyContent: "space-between",
   alignItems: "space-evenly",
 }
 
+const memberNameStyle = {
+  textAlign: "center",
+  lineHeight: "150%",
+  background: "#1BA098",
+  width: "45%",
+  fontFamily: "Mulish",
+  color: "rgba(255, 255, 255, 0.75)",
+  fontStyle: "normal",
+  fontWeight: "400",
+  boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+  borderRadius: "10.2875px",
+}
+
+const newTeamCardStyle = {
+  width: "313px",
+  height: "241px",
+  cursor: 'pointer',
+  border: "2px solid #DEB992",
+  filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.45))",
+  borderRadius: "20px",
+  background: "#051622",
+
+}
+
 const newTeamCardContentStyle = {
-  height: "90%",
+  height: "100%",
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-evenly",
   alignItems: "center",
-}
-
-const userBtnStyle = {
-  width: "45%",
 }
 
 const Teams = () => {
@@ -69,18 +96,16 @@ const Teams = () => {
 
     setTeamsList(newTeamsList)
     console.log(teamsList)
-
   }, [company, setTeamsList])
-  
+
   useEffect(() => {
     console.log(teamsList)
     console.log(teamsList.length)
     if (teamsList.length > 0) {
       setTeamsListReady(true)
-
     }
   }, [teamsList])
-  
+
   useEffect(() => {
     console.log(user)
   }, [user])
@@ -113,7 +138,7 @@ const Teams = () => {
   } else if (teamSelected) {
     return <Navigate replace to='/projects' />
   } else {
-    return  (
+    return (
       // !teamsListReady ? (<h1>Loading...</h1>) :
       <>
         <NavBar />
@@ -126,17 +151,23 @@ const Teams = () => {
             flexWrap: "wrap",
             justifyContent: "flex-start",
             alignItems: "center",
+            background: "#051622",
+            fontFamily: "Mulish",
           }}
         >
-          <h1 style={{ marginTop: "6vh", color: "#1ba098" }}>Teams {teamsList.length}</h1>
+          <h1 style={{ marginTop: "6vh", color: "#1ba098", fontSize: "3rem" }}>
+            Teams {teamsList.length}
+          </h1>
           <div
             style={{
               width: "80%",
               display: "flex",
               flexWrap: "wrap",
-              justifyContent: "space-evenly",
+              justifyContent:
+                teamsArray.length < 3 ? "flex-start" : "space-evenly",
               alignItems: "space-evenly",
-              rowGap: "5rem",
+              gap: "6rem",
+              marginTop: "5vh",
             }}
           >
             {teamsArray.map((team) => (
@@ -147,33 +178,53 @@ const Teams = () => {
                 style={cardStyle}
               >
                 <div style={cardHeaderStyle}>
-                  <h2>{team.name}</h2>
-                  <span>!{team.projectsCount}!</span>
-
+                  <h2
+                    style={{
+                      color: "#FFF",
+                      marginLeft: "10px",
+                    }}
+                  >
+                    {team.name}
+                  </h2>
+                  <span
+                    style={{
+                      color: "rgba(255, 255, 255, 0.75)",
+                      fontStyle: "normal",
+                      fontWeight: "400",
+                      marginRight: "10px",
+                    }}
+                  >
+                    !{team.projectsCount}!
+                  </span>
                 </div>
                 <CardContent style={cardContentStyle}>
-                  <h3>Members</h3>
+                  <h3
+                    style={{
+                      color: "rgba(255, 255, 255, 0.75)",
+                      fontStyle: "normal",
+                      fontWeight: "400",
+                    }}
+                  >
+                    Members
+                  </h3>
                   <div style={teammateStyle}>
                     {team?.teammates?.map((user) => (
-                      <Button
-                        key={user.id}
-                        variant='contained'
-                        style={userBtnStyle}
-                      >
+                      <span key={user.id} style={memberNameStyle}>
                         {user?.profile?.firstName}{" "}
                         {user?.profile?.lastName?.slice(0, 1)}.
-                      </Button>
+                      </span>
                     ))}
                   </div>
                 </CardContent>
               </Card>
             ))}
-            <Card style={cardStyle}>
-              <CardContent style={newTeamCardContentStyle}>
-                <CreateTeamOverlay></CreateTeamOverlay>
-                <span>New Team</span>
-              </CardContent>
-            </Card>
+            {isAdmin && (
+              <Card style={newTeamCardStyle}>
+                {/* <CardContent style={newTeamCardContentStyle}> */}
+                  <CreateTeamOverlay></CreateTeamOverlay>
+                {/* </CardContent> */}
+              </Card>
+            )}
           </div>
         </div>
       </>

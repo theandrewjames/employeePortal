@@ -196,7 +196,7 @@ const NavBar = () => {
           <List
             style={{ textAlign: "center", background: "#051622" }}
             sx={{
-              width: "50%",
+              width: "60%",
               display: "flex",
               flexDirection: "row",
               justifyContent: "center",
