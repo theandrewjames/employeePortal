@@ -11,10 +11,13 @@ import MenuIcon from "@mui/icons-material/Menu"
 import { Link } from "react-router-dom"
 import CloseIcon from "@mui/icons-material/Close"
 import { userState } from "../globalstate"
+import { useNavigate } from "react-router-dom"
+
 import { useRecoilState } from "recoil"
 import { AppBar, Toolbar, Typography } from "@mui/material"
 
 const NavBar = () => {
+  const history = useNavigate()
   const [user, setUser] = useRecoilState(userState)
   const [isAdmin, setIsAdmin] = React.useState(user.admin)
   const [state, setState] = React.useState({
@@ -46,9 +49,9 @@ const NavBar = () => {
     <Box
       style={{ color: "#1ba098", background: "#051622", fontFamily: "Mulish" }}
     >
-      <AppBar position='static'>
+      <AppBar position="static">
         <Toolbar
-          variant='dense'
+          variant="dense"
           style={{
             width: "calc(100% - 5px)",
             background: "#051622",
@@ -59,7 +62,7 @@ const NavBar = () => {
           }}
         >
           <div style={{ width: "5%", marginLeft: "2rem" }}>
-            <img src='logo.png' style={{ width: "4rem" }} />
+            <img src="logo.png" style={{ width: "4rem" }} />
           </div>
           <div
             style={{
@@ -99,7 +102,7 @@ const NavBar = () => {
                   }
                   style={{ textDecoration: "none", color: "black" }}
                 >
-                  <ListItemButton sx={{  }}>
+                  <ListItemButton sx={{}}>
                     <ListItemText
                       style={{ color: "#1ba098" }}
                       primaryTypographyProps={{
@@ -115,12 +118,13 @@ const NavBar = () => {
                 </Link>
               </ListItem>
             ))}
-            <ListItem key={"logout"} sx={{  }}>
+            <ListItem key={"logout"} sx={{}}>
               <ListItemButton
-                sx={{ }}
+                sx={{}}
                 onClick={() => {
                   setUser({})
                   localStorage.clear()
+                  history("/")
                 }}
               >
                 <ListItemText
@@ -132,7 +136,7 @@ const NavBar = () => {
                     lineHeight: "150%",
                     fontWeight: "400",
                   }}
-                  primary='Logout'
+                  primary="Logout"
                 />
               </ListItemButton>
             </ListItem>
