@@ -78,7 +78,6 @@ const Teams = () => {
   const [currentTeam, setCurrentTeam] = useRecoilState(currentTeamState)
   const [teamSelected, setTeamSelected] = useState(false)
   const [teamsList, setTeamsList] = useState([])
-  // const [teamsArray, setTeamsArray] = useState([])
   const [isAdmin, setIsAdmin] = useState(user.admin)
 
   
@@ -87,7 +86,7 @@ const Teams = () => {
       const teamsArray = isAdmin ? company.teams : user.teams
       const companyId = isAdmin ? company.id : user.companies[0].id
       const newTeamsList = []
-      // console.log(teamsArray)
+      console.log(teamsArray)
 
       for (let team of teamsArray) {
 
@@ -101,7 +100,7 @@ const Teams = () => {
       // console.log(newTeamsList)
       setTeamsList(newTeamsList)
     },
-    [company, setTeamsList]
+    [company, user, setTeamsList]
   )
 
   // useEffect(() => {
@@ -132,7 +131,7 @@ const Teams = () => {
         <NavBar />
         <div
           style={{
-            height: "94vh",
+            minHeight: "94vh",
             width: "100%",
             display: "flex",
             flexDirection: "column",
