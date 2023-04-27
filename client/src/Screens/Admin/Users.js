@@ -6,8 +6,8 @@ import { useState } from "react";
 import SignUp from "../../Components/UserRegistryPage/SignUp";
 import UsersTable from "../../Components/UserRegistryPage/UsersTable";
 import styled from "styled-components";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { allUsersState, companyState, userState } from "../../globalstate";
+import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
+import { allUsersState, companyState, userState, errorState } from "../../globalstate";
 import { getAllUsers } from "../../Services/users";
 
 const Title = styled.h1`
@@ -30,13 +30,19 @@ const Users = () => {
   const user = useRecoilValue(userState);
   const company = useRecoilValue(companyState);
   const setUsers = useSetRecoilState(allUsersState);
+  const [formError, setFormError] = useRecoilState(errorState);
+  const resetError = () => setFormError(errorState);
+
+
 
   const handleOpen = () => {
     setOpen(true);
+    resetError()
   };
 
   const handleClose = () => {
     setOpen(false);
+    resetError()
   };
 
   useEffect(() => {
