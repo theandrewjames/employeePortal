@@ -9,21 +9,23 @@ export const getProjectsByTeam = async (companyId, teamId) => {
 }
 
 export const createTeam = async (authorId, companyId, teamDto) => {
-  console.log(teamDto)
+  // console.log(teamDto)
 
   const response = await api.post(
     `/team/${authorId}/company/${companyId}`,
     teamDto
   )
-  // if (error) {
-  // console.log(error.message);
-  //TODO handle this error
-  // }
-  console.log(response.data)
-  // return response.data;
+
+  // console.log(response.data)
+  return response.data;
 }
 
 export const getTeamById = async (teamId) => {
   const response = await api.get(`/team/${teamId}`)
+  return response.data
+}
+
+export const addTeamToCompany = async (companyId) => {
+  const response = await api.get(`company/${companyId}/teams`)
   return response.data
 }
