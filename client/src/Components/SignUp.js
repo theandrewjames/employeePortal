@@ -1,4 +1,3 @@
-import { Box } from "@mui/material";
 import React, { Fragment, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
@@ -75,13 +74,15 @@ const SignUp = (props) => {
   const options = ["False", "True"];
 
   const company = useRecoilValue(companyState);
-  const setNewUser = useSetRecoilState(allUsersState);
-
+  const [users, setUsers] = useRecoilState(allUsersState);
   const [userIsAdmin, setUserIsAdmin] = useState(false);
   const [form, setForm] = useState(SignUpForm);
   const [formError, setFormError] = useRecoilState(errorState);
 
   const resetError = () => setFormError(errorState);
+
+  // const setUsers = useSetRecoilState(allUsersState);
+  // const users = useRecoilValue(allUsersState);
 
   const formIsValid = () => {
     if (
@@ -118,12 +119,11 @@ const SignUp = (props) => {
     return true;
   };
 
-  const handleSignUp = (e) => {
-    e.preventDefault();
+  const handleSignUp = async () => {
     console.log(form);
 
     if (formIsValid()) {
-      createUser(company.id, {
+      await createUser(company.id, {
         credentials: {
           username: form.username.value,
           password: form.password.value,
@@ -137,9 +137,9 @@ const SignUp = (props) => {
         admin: userIsAdmin,
       })
         .then((data) => {
+          setUsers([...users, data]);
           setForm(SignUpForm);
           setOpen(false);
-          setNewUser([...allUsersState, data]);
         })
         .catch((error) => console.log(error));
     }

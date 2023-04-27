@@ -8,7 +8,7 @@ import UsersTable from "../../Components/UsersTable";
 import styled from "styled-components";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { allUsersState, companyState, userState } from "../../globalstate";
-import { createUser, getAllUsers } from "../../Services/users";
+import { getAllUsers } from "../../Services/users";
 
 const Title = styled.h1`
   font-weight: bold;
@@ -40,14 +40,6 @@ const Users = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
-  // const handleChange = (e) => {
-  //   setUserInfo(() => ({
-  //     ...userInfo,
-  //     isAdmin: userIsAdmin,
-  //     [e.target.name]: e.target.value,
-  //   }));
-  // };
 
   useEffect(() => {
     async function getUsers() {
