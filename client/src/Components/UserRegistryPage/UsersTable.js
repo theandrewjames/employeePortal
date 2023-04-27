@@ -10,7 +10,7 @@ import {
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material";
 import { useRecoilValue } from "recoil";
-import { allUsersState } from "../globalstate";
+import { allUsersState } from "../../globalstate";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -59,12 +59,26 @@ const UsersTable = (props) => {
               <StyledTableRow key={user.name}>
                 <StyledTableCell>{handleName(user.profile)}</StyledTableCell>
                 <StyledTableCell>{user.profile.email}</StyledTableCell>
-                <StyledTableCell>
-                  {user.active === true ? "YES" : "NO"}
-                </StyledTableCell>
-                <StyledTableCell>
-                  {user.admin === true ? "YES" : "NO"}
-                </StyledTableCell>
+                {user.active === true ? (
+                  <StyledTableCell style={{ color: "#00B11c" }}>
+                    {"YES"}
+                  </StyledTableCell>
+                ) : (
+                  <StyledTableCell style={{ color: "#FF0000" }}>
+                    {"NO"}
+                  </StyledTableCell>
+                )}
+
+                {user.admin === true ? (
+                  <StyledTableCell style={{ color: "#00B11c" }}>
+                    {"YES"}
+                  </StyledTableCell>
+                ) : (
+                  <StyledTableCell style={{ color: "#FF0000" }}>
+                    {"NO"}
+                  </StyledTableCell>
+                )}
+
                 <StyledTableCell>{user.status}</StyledTableCell>
               </StyledTableRow>
             ))}
