@@ -161,6 +161,7 @@ const Announcements = () => {
   }, [announcementUpdate])
 
   const handleNewAnnoucement = () => {
+    setAnnouncementUpdate(false)
     setOpenNewDialog(true)
   }
 
@@ -199,10 +200,11 @@ const Announcements = () => {
         <div
           style={{
             // marginTop: "10vh",
-            background: "#051622",
+            backgroundColor: "#051622",
             width: "100vw",
-            height: "100%",
-            scrollBehavior: "auto",
+            height: "100vh",
+            overflowX: "hidden",
+            overflowY: "auto",
           }}
         >
           <Box
