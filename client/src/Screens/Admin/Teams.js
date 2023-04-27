@@ -78,59 +78,43 @@ const Teams = () => {
   const [currentTeam, setCurrentTeam] = useRecoilState(currentTeamState)
   const [teamSelected, setTeamSelected] = useState(false)
   const [teamsList, setTeamsList] = useState([])
-  const [teamsListReady, setTeamsListReady] = useState(false)
+  // const [teamsArray, setTeamsArray] = useState([])
   const [isAdmin, setIsAdmin] = useState(user.admin)
 
-  useEffect(() => {
-    const createNewTeamsList = async () => {
+  
+  useEffect(
+    () => async () => {
+      const teamsArray = isAdmin ? company.teams : user.teams
+      const companyId = isAdmin ? company.id : user.companies[0].id
       const newTeamsList = []
-      company?.teams?.forEach(async (team) => {
-        const projects = await getProjectsByTeam(company.id, team.id)
-        console.log("id: ", team.id, "projects: ", projects)
+      // console.log(teamsArray)
+
+      for (let team of teamsArray) {
+
+        const projects = await getProjectsByTeam(companyId, team.id)
+        // console.log("id: ", team.id, "projects: ", projects)
         newTeamsList.push({
           ...team,
-          projectsCount: "# of Projects: " + projects.length,
+          projectsCount: projects.length,
         })
-      })
-      return newTeamsList
-    }
+      }
+      // console.log(newTeamsList)
+      setTeamsList(newTeamsList)
+    },
+    [company, setTeamsList]
+  )
 
-    const newTeamsList = createNewTeamsList().then((result) => {
-      console.log(newTeamsList)
-      setTeamsList(result)
-    })
-
-    console.log(teamsList)
-  }, [company, setTeamsList])
-
-  useEffect(() => {
-    console.log(teamsList)
-    console.log(teamsList.length)
-    if (teamsList.length > 0) {
-      setTeamsListReady(true)
-    }
-  }, [teamsList])
-
-  useEffect(() => {
-    console.log(user)
-  }, [user])
+  // useEffect(() => {
+  //   console.log(user)
+  // }, [user])
 
   const handleCardClick = async (event) => {
     setCurrentTeam(await getTeamById(event.currentTarget.dataset.id))
     setTeamSelected(true)
   }
 
-  // const calcProjectsCountString = (id) => {
-  //   const str = teamProjectsCounts
-  //     .filter((obj) => obj.teamId === id)
-  //     .map((obj) => obj.projectsCount)[0]
-  //   console.log(str)
-  //   return str
-  // }
   console.log(company)
   console.log(teamsList.length)
-
-  const teamsArray = isAdmin ? company.teams : user.teams
 
   if (!user.isLoggedIn) {
     return <Navigate replace to='/' />
@@ -144,7 +128,6 @@ const Teams = () => {
     return <Navigate replace to='/projects' />
   } else {
     return (
-      // !teamsListReady ? (<h1>Loading...</h1>) :
       <>
         <NavBar />
         <div
@@ -160,7 +143,7 @@ const Teams = () => {
           }}
         >
           <h1 style={{ marginTop: "6vh", color: "#1ba098", fontSize: "3rem" }}>
-            Teams {teamsList.length}
+            Teams
           </h1>
           <div
             style={{
@@ -168,13 +151,13 @@ const Teams = () => {
               display: "flex",
               flexWrap: "wrap",
               justifyContent:
-                teamsArray.length < 3 ? "flex-start" : "space-evenly",
+                teamsList.length < 3 ? "flex-start" : "space-evenly",
               alignItems: "space-evenly",
               gap: "6rem",
               marginTop: "5vh",
             }}
           >
-            {teamsArray.map((team) => (
+            {teamsList.map((team) => (
               <Card
                 key={team.id}
                 data-id={team.id}
@@ -198,7 +181,7 @@ const Teams = () => {
                       marginRight: "10px",
                     }}
                   >
-                    !{team.projectsCount}!
+                    # of Projects: {team.projectsCount}
                   </span>
                 </div>
                 <CardContent style={cardContentStyle}>
