@@ -11,19 +11,17 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  Grid,
   IconButton,
-  InputLabel,
   List,
   ListItem,
   ListItemText,
   MenuItem,
   Select,
   TextField,
-  Typography,
-  makeStyles,
   createTheme,
   ThemeProvider,
+  Alert,
+  AlertTitle,
 } from '@mui/material'
 
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
@@ -62,7 +60,7 @@ const BackButton = styled.div`
 const theme = createTheme({
   palette: {
     myCustomColor: {
-      main: '#FFD580',
+      main: '#DEB992',
     },
   },
 })
@@ -79,6 +77,7 @@ const Projects = () => {
   const [projectName, setProjectName] = useState('')
   const [description, setDescription] = useState('')
   const [isActiveProject, setIsActiveProject] = useState(null)
+  const [showAlert, setShowAlert] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -93,6 +92,13 @@ const Projects = () => {
     }
     fetchData()
   }, [projectListUpdate, company, teamState, user.admin, user.companies])
+
+  const validateEntries = () => {
+    if (projectName === '' || description === '') {
+      setShowAlert(true)
+      return true
+    }
+  }
 
   const handleNewOpen = () => {
     //Empty text fields
@@ -109,6 +115,12 @@ const Projects = () => {
   }
 
   const handleNewSubmit = async () => {
+    if (validateEntries()) {
+      setNewOpen(false)
+      setTimeout(() => setShowAlert(false), 3000)
+      return
+    }
+
     await createProject(
       {
         name: projectName,
@@ -151,6 +163,12 @@ const Projects = () => {
   const handleEditSave = async () => {
     //Edit project with correct id and send to database
     const currentProject = await getProjectById(currentProjectId)
+
+    if (validateEntries()) {
+      setEditOpen(false)
+      setTimeout(() => setShowAlert(false), 3000)
+      return
+    }
 
     await saveProject({
       ...currentProject,
@@ -227,7 +245,7 @@ const Projects = () => {
             <List dense={false}>
               {projects.map((project) => (
                 <>
-                  <Divider style={{ backgroundColor: '#FFD580' }} />
+                  <Divider style={{ backgroundColor: '#DEB992' }} />
                   <ListItem
                     style={{ width: '1000px' }}
                     key={project.id}
@@ -239,7 +257,7 @@ const Projects = () => {
                         aria-label='edit'
                         variant='contained'
                         style={{
-                          backgroundColor: '#FFD580',
+                          backgroundColor: '#DEB992',
                           color: 'black',
                           width: '80px',
                           height: '30px',
@@ -456,7 +474,7 @@ const Projects = () => {
                 />
                 <DialogTitle
                   sx={{
-                    color: '#FFD580',
+                    color: '#DEB992',
                   }}
                 >
                   Active?
@@ -500,6 +518,12 @@ const Projects = () => {
               </DialogActions>
             </Dialog>
           </ThemeProvider>
+          {showAlert && (
+            <Alert severity='warning'>
+              <AlertTitle>Warning</AlertTitle>
+              Invalid Entry!
+            </Alert>
+          )}
         </Container>
       </>
     )
