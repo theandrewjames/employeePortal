@@ -57,12 +57,11 @@ const memberNameStyle = {
 const newTeamCardStyle = {
   width: "313px",
   height: "241px",
-  cursor: 'pointer',
+  cursor: "pointer",
   border: "2px solid #DEB992",
   filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.45))",
   borderRadius: "20px",
   background: "#051622",
-
 }
 
 const newTeamCardContentStyle = {
@@ -83,18 +82,24 @@ const Teams = () => {
   const [isAdmin, setIsAdmin] = useState(user.admin)
 
   useEffect(() => {
-    const newTeamsList = []
-    const teamIds = company?.teams?.forEach(async (team) => {
-      const projects = await getProjectsByTeam(company.id, team.id)
-      console.log("id: ", team.id, "projects: ", projects)
-      newTeamsList.push({
-        ...team,
-        projectsCount: "# of Projects: " + projects.length,
+    const createNewTeamsList = async () => {
+      const newTeamsList = []
+      company?.teams?.forEach(async (team) => {
+        const projects = await getProjectsByTeam(company.id, team.id)
+        console.log("id: ", team.id, "projects: ", projects)
+        newTeamsList.push({
+          ...team,
+          projectsCount: "# of Projects: " + projects.length,
+        })
       })
-    })
-    console.log(newTeamsList)
+      return newTeamsList
+    }
 
-    setTeamsList(newTeamsList)
+    const newTeamsList = createNewTeamsList().then((result) => {
+      console.log(newTeamsList)
+      setTeamsList(result)
+    })
+
     console.log(teamsList)
   }, [company, setTeamsList])
 
@@ -220,7 +225,7 @@ const Teams = () => {
             {isAdmin && (
               <Card style={newTeamCardStyle}>
                 {/* <CardContent style={newTeamCardContentStyle}> */}
-                  <CreateTeamOverlay></CreateTeamOverlay>
+                <CreateTeamOverlay></CreateTeamOverlay>
                 {/* </CardContent> */}
               </Card>
             )}
