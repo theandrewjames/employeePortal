@@ -10,7 +10,7 @@ import { useRecoilState } from "recoil"
 import { companyState, userState } from "../globalstate"
 import { display, width } from "@mui/system"
 import api from "../Services/api"
-import { createTeam } from "../Services/teams"
+import { createTeam, addTeamToCompany } from "../Services/teams"
 
 const CreateTeamOverlay = () => {
   const [company, setCompany] = useRecoilState(companyState)
@@ -19,21 +19,58 @@ const CreateTeamOverlay = () => {
   const [teamName, setTeamName] = React.useState("")
   const [description, setDescription] = React.useState("")
   const [selectedMembers, setSelectedMembers] = React.useState([])
+  const [newTeam, setNewTeam] = React.useState(null)
+  const [teamAdded, setTeamAdded] = React.useState(false)
+
+  React.useEffect(() => {
+    // console.log("start set company")
+
+    if (newTeam) {
+      // console.log("new team true")
+
+      setCompany({ ...company, teams: [...company.teams, newTeam] })
+      setNewTeam(null)
+      setTeamAdded(true)
+      // console.log("teamadded in set company: ", teamAdded)
+    }
+    // console.log("end set company")
+  }, [newTeam])
+
+  React.useEffect(() => {
+    // console.log("start set user")
+    // console.log("teamadded in set user: ", teamAdded)
+    if (teamAdded) {
+      // console.log("team added true")
+
+      setUser({
+        ...user,
+        companies: [
+          ...user.companies.map((currentCompany) =>
+            currentCompany.id === company.id ? company : currentCompany
+          ),
+        ],
+      })
+      setTeamAdded(false)
+    }
+    // console.log('end set user')
+  }, [company, teamAdded])
 
   const handleClickOpen = () => {
     setOpen(true)
   }
 
-  const handleClose = () => {
-    console.log("info: ", teamName, description, selectedMembers)
+  const handleClose = async () => {
+    // console.log("info: ", teamName, description, selectedMembers)
 
     const teamDto = {
-        name: teamName,
-        description: description,
-        teammates: selectedMembers,
+      name: teamName,
+      description: description,
+      teammates: selectedMembers,
     }
-    console.log(teamDto)
-    createTeam(user.id, company.id, teamDto)
+    // console.log(teamDto)
+    setNewTeam(await createTeam(user.id, company.id, teamDto))
+    // console.log(newTeam)
+
     setOpen(false)
   }
 
@@ -41,7 +78,7 @@ const CreateTeamOverlay = () => {
     const {
       target: { value },
     } = event
-    console.log(value)
+    // console.log(value)
     !selectedMembers.map((user) => user.id).includes(value.id) &&
       setSelectedMembers([...selectedMembers, value])
   }
@@ -54,8 +91,12 @@ const CreateTeamOverlay = () => {
   }
 
   return (
-    <div style={{width: '100%'}}>
-      <Button variant='text' onClick={handleClickOpen} style={{fontSize: '8rem', width: '100%'}}>
+    <div style={{ width: "100%" }}>
+      <Button
+        variant='text'
+        onClick={handleClickOpen}
+        style={{ fontSize: "8rem", width: "100%" }}
+      >
         +
       </Button>
       <Dialog open={open} onClose={handleClose}>
