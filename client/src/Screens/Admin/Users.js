@@ -3,10 +3,10 @@ import NavBar from "../../Components/NavBar";
 import { Modal } from "@mui/material";
 import { Fragment, useEffect } from "react";
 import { useState } from "react";
-import SignUp from "../../Components/SignUp";
-import UsersTable from "../../Components/UsersTable";
+import SignUp from "../../Components/UserRegistryPage/SignUp";
+import UsersTable from "../../Components/UserRegistryPage/UsersTable";
 import styled from "styled-components";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { allUsersState, companyState, userState } from "../../globalstate";
 import { getAllUsers } from "../../Services/users";
 
@@ -21,15 +21,13 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
   height: 100vh;
 `;
 
 const Users = () => {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useRecoilState(userState);
-  // const [users, setUsers] = useRecoilState(allUsersState);
+  const user = useRecoilValue(userState);
   const company = useRecoilValue(companyState);
   const setUsers = useSetRecoilState(allUsersState);
 
