@@ -41,8 +41,8 @@ public class ProjectController {
 
 	@PatchMapping("/{projectId}")
 	@CrossOrigin(origins="*")
-	public ProjectDto updateActiveProject(@PathVariable Long projectId, @RequestBody ProjectDto projectDto){
-		return projectService.updateActiveProject(projectId, projectDto);
+	public ProjectDto updateProject(@PathVariable Long projectId, @RequestBody ProjectDto projectDto){
+		return projectService.updateProject(projectId, projectDto);
 	}
 
 }

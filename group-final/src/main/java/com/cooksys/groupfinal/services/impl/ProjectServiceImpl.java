@@ -8,6 +8,7 @@ import com.cooksys.groupfinal.exceptions.BadRequestException;
 import com.cooksys.groupfinal.exceptions.NotAuthorizedException;
 import com.cooksys.groupfinal.exceptions.NotFoundException;
 import com.cooksys.groupfinal.mappers.ProjectMapper;
+import com.cooksys.groupfinal.mappers.TeamMapper;
 import com.cooksys.groupfinal.repositories.ProjectRepository;
 import com.cooksys.groupfinal.repositories.TeamRepository;
 import com.cooksys.groupfinal.services.ProjectService;
@@ -26,6 +27,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectMapper projectMapper;
 
     private final TeamRepository teamRepository;
+    private final TeamMapper teamMapper;
 
     private final ObjectMapper objectMapper;
 
@@ -115,14 +117,17 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDto updateActiveProject(Long projectId, ProjectDto projectDto) {
+    public ProjectDto updateProject(Long projectId, ProjectDto projectDto) {
         Optional<Project> projectToFind = projectRepository.findById(projectId);
 
         if(projectToFind.isEmpty()){
             throw new NotFoundException("No project exists with this id: " + projectId);
         } else {
             Project project = projectToFind.get();
+
+            project.setName(projectDto.getName());
             project.setActive(projectDto.isActive());
+            project.setDescription(projectDto.getDescription());
             return projectMapper.entityToDto(projectRepository.saveAndFlush(project));
         }
     }
