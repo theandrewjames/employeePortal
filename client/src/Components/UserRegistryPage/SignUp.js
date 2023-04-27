@@ -95,6 +95,16 @@ const SignUp = (props) => {
 
   const resetError = () => setFormError(errorState);
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSignUp();
+    }
+  };
+
+  const PHONE_REGEX = new RegExp(
+    /"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$"/gim
+  );
+
   const formIsValid = () => {
     if (
       !firstName ||
@@ -121,6 +131,14 @@ const SignUp = (props) => {
         isError: true,
         message: "Email must be in correct format",
         field: "email",
+      });
+      return false;
+    } else if (!phone.match(/\(\d{3}\)\s*\d{3}-\d{4}/)) {
+      setFormError({
+        ...formError,
+        isError: true,
+        message: "Phone number must be in correct format",
+        field: "phone",
       });
       return false;
     } else if (password !== confirmPassword) {
@@ -179,10 +197,11 @@ const SignUp = (props) => {
 
   return (
     <StyledModal>
-      <Form>
+      <Form >
         <StyledDiv>
           <Input
             placeholder="First Name"
+            type="text"
             w={"170px"}
             style={{ margin: "10px" }}
             onChange={(e) => {
@@ -192,6 +211,7 @@ const SignUp = (props) => {
           />
           <Input
             placeholder="Last Name"
+            type="text"
             w={"170px"}
             style={{ margin: "10px" }}
             onChange={(e) => {
@@ -203,6 +223,7 @@ const SignUp = (props) => {
         <Fragment>
           <Input
             placeholder="Email"
+            type="text"
             w={"390px}"}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -213,6 +234,7 @@ const SignUp = (props) => {
         <Fragment>
           <Input
             placeholder="Phone"
+            type="tel"
             w={"390px}"}
             onChange={(e) => {
               setPhone(e.target.value);
@@ -223,6 +245,7 @@ const SignUp = (props) => {
         <Fragment>
           <Input
             placeholder="Username"
+            type="text"
             w={"390px}"}
             onChange={(e) => {
               setUsername(e.target.value);
@@ -233,6 +256,7 @@ const SignUp = (props) => {
         <StyledDiv>
           <Input
             placeholder="Password"
+            type="password"
             w={"170px"}
             style={{ margin: "10px" }}
             onChange={(e) => {
@@ -242,6 +266,7 @@ const SignUp = (props) => {
           />
           <Input
             placeholder="Confirm password"
+            type="password"
             w={"170px"}
             style={{ margin: "10px" }}
             onChange={(e) => {
@@ -260,7 +285,7 @@ const SignUp = (props) => {
           </StyledSelect>
         </div>
 
-        <Button onClick={handleSignUp}>Sign Up</Button>
+        <Button onClick={handleSignUp} onKeyPress={handleKeyPress}>Sign Up</Button>
 
         {formError.isError && !formError.field ? (
           <p
