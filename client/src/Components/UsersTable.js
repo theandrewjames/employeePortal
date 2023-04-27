@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { allUsersState } from "../globalstate";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -29,7 +29,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const UsersTable = (props) => {
   const { handleOpen, handleName } = props;
-  const [users, setUsers] = useRecoilState(allUsersState);
+
+  const users = useRecoilValue(allUsersState);
+
   return (
     <Fragment>
       <TableContainer
@@ -63,9 +65,7 @@ const UsersTable = (props) => {
                 <StyledTableCell>
                   {user.admin === true ? "YES" : "NO"}
                 </StyledTableCell>
-                <StyledTableCell>
-                  {user.status === true ? "JOINED" : "PENDING"}
-                </StyledTableCell>
+                <StyledTableCell>{user.status}</StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>

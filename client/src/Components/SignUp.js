@@ -1,8 +1,11 @@
-import { Box } from "@mui/material";
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
+import { allUsersState, companyState, errorState } from "../globalstate";
+import { createUser } from "../Services/users";
+import { SignUpForm } from "./SignUpForm";
 
-const Form = styled.form`
+const Form = styled.div`
   background: #051622;
   display: flex;
   align-items: center;
@@ -17,15 +20,24 @@ const Form = styled.form`
 const Title = styled.h1`
   font-weight: bold;
   margin: 0;
+  font-size: 25px;
+  padding: 10px;
 `;
 
 const Input = styled.input`
-  background-color: black;
+  background-color: transparent;
   border: none;
-  padding: 12px 15px;
-  margin: 8px 0;
-  width: 100%;
+  border-bottom: 2px solid #deb992;
+  padding: 7px 15px;
+  margin: 5px 0;
+  width: 60%;
   color: #deb992;
+  &::placeholder {
+    color: #deb992;
+  }
+  &:focus {
+    outline: none;
+  }
 `;
 
 const Button = styled.button`
@@ -39,30 +51,99 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-const styledModal = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  transition: "transform 0.6s ease-in-out",
-  textAlign: "center",
-  zIndex: 100,
-  width: "50%",
-  height: "70%",
-};
+const StyledModal = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.6s ease-in-out;
+  text-align: center;
+  z-index: 100;
+  width: 50%;
+  height: 70%;
+`;
+
+const StyledSelect = styled.select`
+  text-align: center;
+  height: 60%;
+  width: 80%;
+`;
 
 const SignUp = (props) => {
-  const {
-    handleChange,
-    handleSignUp,
-    userInfo,
-    setUserIsAdmin,
-    form,
-    setForm,
-    formError,
-    resetError,
-  } = props;
+  const { setOpen } = props;
   const options = ["False", "True"];
+
+  const company = useRecoilValue(companyState);
+  const [users, setUsers] = useRecoilState(allUsersState);
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
+  const [form, setForm] = useState(SignUpForm);
+  const [formError, setFormError] = useRecoilState(errorState);
+
+  const resetError = () => setFormError(errorState);
+
+  // const setUsers = useSetRecoilState(allUsersState);
+  // const users = useRecoilValue(allUsersState);
+
+  const formIsValid = () => {
+    if (
+      !form.firstName.value ||
+      !form.lastName.value ||
+      !form.email.value ||
+      !form.phone.value
+    ) {
+      setFormError({
+        ...formError,
+        isError: true,
+        message: "All fields are required",
+      });
+      return false;
+    } else if (
+      !form.email.value.match(
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+      )
+    ) {
+      setFormError({
+        ...formError,
+        isError: true,
+        message: "Email must be in format a-z@a-z.com",
+        field: "email",
+      });
+    } else if (form.password.value !== form.confirmPassword.value) {
+      setFormError({
+        ...formError,
+        isError: true,
+        message: "Passwords doen't match",
+        field: "password",
+      });
+    }
+    return true;
+  };
+
+  const handleSignUp = async () => {
+    console.log(form);
+
+    if (formIsValid()) {
+      await createUser(company.id, {
+        credentials: {
+          username: form.username.value,
+          password: form.password.value,
+        },
+        profile: {
+          firstName: form.firstName.value,
+          lastName: form.lastName.value,
+          email: form.email.value,
+          phone: form.phone.value,
+        },
+        admin: userIsAdmin,
+      })
+        .then((data) => {
+          setUsers([...users, data]);
+          setForm(SignUpForm);
+          setOpen(false);
+        })
+        .catch((error) => console.log(error));
+    }
+  };
 
   const handleSelect = (event) => {
     event.target.value === "False"
@@ -71,28 +152,7 @@ const SignUp = (props) => {
   };
 
   return (
-    <Box sx={{ ...styledModal }}>
-      {/* <Form onSubmit={handleSignUp}>
-        {inputs.map((input) => (
-          <Input
-            key={input.id}
-            {...input}
-            value={userInfo[input.name]}
-            onChange={handleChange}
-          />
-        ))}
-
-        <div style={{ margin: "25px" }}>
-          <Title>Make user an admin role?</Title>
-          <select onChange={handleSelect}>
-            <option>Pick an option!</option>
-            {options.map((option, index) => {
-              return <option key={index}>{option}</option>;
-            })}
-          </select>
-        </div>
-        <Button>Submit</Button>
-      </Form> */}
+    <StyledModal>
       <Form>
         {Object.entries(form).map(([key, props]) => (
           <Fragment>
@@ -123,7 +183,18 @@ const SignUp = (props) => {
             )}
           </Fragment>
         ))}
-        <Button>Sign Up</Button>
+
+        <div style={{ margin: "25px" }}>
+          <Title>Make user an admin role?</Title>
+          <StyledSelect onChange={handleSelect}>
+            <option>Pick an option!</option>
+            {options.map((option, index) => {
+              return <option key={index}>{option}</option>;
+            })}
+          </StyledSelect>
+        </div>
+
+        <Button onClick={handleSignUp}>Sign Up</Button>
         {formError.isError && !formError.field ? (
           <p
             style={{
@@ -138,7 +209,7 @@ const SignUp = (props) => {
           ""
         )}
       </Form>
-    </Box>
+    </StyledModal>
   );
 };
 

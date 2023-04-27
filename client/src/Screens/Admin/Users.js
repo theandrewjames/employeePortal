@@ -6,14 +6,9 @@ import { useState } from "react";
 import SignUp from "../../Components/SignUp";
 import UsersTable from "../../Components/UsersTable";
 import styled from "styled-components";
-import { useRecoilState } from "recoil";
-import {
-  allUsersState,
-  companyState,
-  errorState,
-  userState,
-} from "../../globalstate";
-import { createUser, getAllUsers } from "../../Services/users";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { allUsersState, companyState, userState } from "../../globalstate";
+import { getAllUsers } from "../../Services/users";
 
 const Title = styled.h1`
   font-weight: bold;
@@ -31,107 +26,12 @@ const Container = styled.div`
   height: 100vh;
 `;
 
-const initialFormState = {
-  firstName: {
-    value: "",
-    placeholder: "First Name",
-    type: "text",
-  },
-  lastName: {
-    value: "",
-    placeholder: "Last Name",
-    type: "text",
-  },
-  email: {
-    value: "",
-    placeholder: "Email",
-    type: "email",
-  },
-  phone: {
-    value: "",
-    placeholder: "123-456-7890",
-    type: "tel",
-    pattern: "[0-9]{3}-[0-9]{3}-[0-9]{4}",
-  },
-  username: {
-    value: "",
-    placeholder: "Username",
-    type: "text",
-  },
-  password: {
-    value: "",
-    placeholder: "Password",
-    type: "password",
-  },
-  confirmPassword: {
-    value: "",
-    placeholder: "Confirm Password",
-    type: "password",
-  },
-  admin: {
-    value: false,
-    placeholder: "Admin",
-    type: "text",
-  },
-};
-
 const Users = () => {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useRecoilState(userState);
-  const [users, setUsers] = useRecoilState(allUsersState);
-  const [company, setCompany] = useRecoilState(companyState);
-  const [userIsAdmin, setUserIsAdmin] = useState(false);
-  const [form, setForm] = useState(initialFormState);
-  const [formError, setFormError] = useRecoilState(errorState);
-  const [allUsers, setAllUsers] = useState([]);
-  const resetError = () => setFormError(errorState);
-  const [userInfo, setUserInfo] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-    isAdmin: false,
-  });
-
-  const formIsValid = () => {
-    if (
-      !form.firstName.value ||
-      !form.lastName.value ||
-      !form.email.value ||
-      !form.phone.value
-    ) {
-      setFormError({
-        ...formError,
-        isError: true,
-        message: "All fields are required",
-      });
-      return false;
-    } else if (
-      !form.email.value.match(
-        /^[a-zA-Z0-9.!#$%&'*+/=?^_`}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-      )
-    ) {
-      setFormError({
-        ...formError,
-        isError: true,
-        message: "Email must be in format a-z@a-z.com",
-        field: "email",
-      });
-    } else if (form.password.value !== form.confirmPassword.value) {
-      setFormError({
-        ...formError,
-        isError: true,
-        message: "Passwords doen't match",
-        field: "password",
-      });
-    }
-    return true;
-  };
-
-  const COMPANY_ID = company.id;
+  // const [users, setUsers] = useRecoilState(allUsersState);
+  const company = useRecoilValue(companyState);
+  const setUsers = useSetRecoilState(allUsersState);
 
   const handleOpen = () => {
     setOpen(true);
@@ -141,34 +41,12 @@ const Users = () => {
     setOpen(false);
   };
 
-  const handleChange = (e) => {
-    setUserInfo(() => ({
-      ...userInfo,
-      isAdmin: userIsAdmin,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleSignUp = (e) => {
-    e.preventDefault();
-    console.log(form);
-
-    if (formIsValid()) {
-      createUser(COMPANY_ID, form)
-        .then((data) => {
-          setForm(initialFormState);
-          setUsers([...users, data]);
-          // setAllUsers([...allUsers, response]);
-        })
-        .catch((error) => console.log(error));
-    }
-  };
-
   useEffect(() => {
-    console.log(company);
-    getAllUsers(COMPANY_ID).then((data) => {
+    async function getUsers() {
+      const data = await getAllUsers(company.id);
       setUsers(data);
-    });
+    }
+    getUsers();
   }, []);
 
   const handleName = (profile) => {
@@ -192,16 +70,7 @@ const Users = () => {
           </div>
           <UsersTable handleOpen={handleOpen} handleName={handleName} />
           <Modal open={open} onClose={handleClose}>
-            <SignUp
-              handleChange={handleChange}
-              handleSignUp={handleSignUp}
-              userInfo={userInfo}
-              setUserIsAdmin={setUserIsAdmin}
-              form={form}
-              setForm={setForm}
-              formError={formError}
-              resetError={resetError}
-            />
+            <SignUp setOpen={setOpen} />
           </Modal>
         </Container>
       </Fragment>
