@@ -34,7 +34,7 @@ const Announcements = () => {
     color: "#FFFFFF",
     border: "1px solid #1ba098",
     borderRadius: "5%",
-    width: "5vw",
+    width: "6vw",
     height: "5vh",
     display: "flex",
     justifyContent: "center",
@@ -121,11 +121,12 @@ const Announcements = () => {
 
   const Button = styled.button`
     background: #1ba098;
+    font-size: 0.8em;
     border-radius: 10.2875px;
-    border: 1px;
+    // border: 1px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    padding: 12px 45px;
+    // padding: 12px 45px;
     font-weight: bold;
     cursor: pointer;
     color: rgba(255, 255, 255, 0.75);
