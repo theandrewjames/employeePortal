@@ -4,11 +4,13 @@ import NavBar from '../../Components/NavBar'
 import { companyState, currentTeamState, userState } from '../../globalstate'
 import { useEffect, useState } from 'react'
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   Grid,
   IconButton,
   InputLabel,
@@ -18,6 +20,10 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography,
+  makeStyles,
+  createTheme,
+  ThemeProvider,
 } from '@mui/material'
 
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
@@ -31,13 +37,11 @@ import {
 import styled from 'styled-components'
 
 const Container = styled.div`
-  ${'' /* background-color: #051622; */}
-  background-color:white;
+  background-color: #051622;
   color: #1ba098;
   display: flex;
   flex-direction: column;
   align-items: center;
-  ${'' /* justify-content: center; */}
   text-align: center;
   height: 100vh;
   fontsize: 35px;
@@ -54,6 +58,14 @@ const BackButton = styled.div`
     text-decoration: none;
   }
 `
+
+const theme = createTheme({
+  palette: {
+    myCustomColor: {
+      main: '#FFD580',
+    },
+  },
+})
 
 const Projects = () => {
   const [user, setUser] = useRecoilState(userState)
@@ -80,7 +92,7 @@ const Projects = () => {
       setProjects(data)
     }
     fetchData()
-  }, [projectListUpdate, company, teamState])
+  }, [projectListUpdate, company, teamState, user.admin, user.companies])
 
   const handleNewOpen = () => {
     //Empty text fields
@@ -186,51 +198,38 @@ const Projects = () => {
             </Button>
           </BackButton>
 
-          <h1>Projects For {teamState.name}</h1>
-          {user.admin && (
-            <Button variant='outlined' onClick={handleNewOpen}>
-              New
-            </Button>
-          )}
-          <Dialog open={newOpen} onClose={handleNewClose}>
-            <DialogActions>
-              <IconButton onClick={handleNewClose}>
-                <HighlightOffIcon />
-              </IconButton>
-            </DialogActions>
-            <DialogContent>
-              <TextField
-                autoFocus
-                margin='dense'
-                id='Project-Name'
-                label='Project Name'
-                type='text'
-                fullWidth
-                variant='standard'
-                value={projectName}
-                onChange={handleProjectNameChange}
-              />
-              <TextField
-                autoFocus
-                margin='dense'
-                id='Description'
-                label='Description'
-                type='text'
-                fullWidth
-                variant='standard'
-                value={description}
-                onChange={handleDescriptionChange}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleNewSubmit}>Submit</Button>
-            </DialogActions>
-          </Dialog>
-          <Grid item xs={12} md={6}>
-            <div>
-              <List dense={false}>
-                {projects.map((project) => (
+          <Box
+            display='flex'
+            alignItems='center'
+            flexDirection='column'
+            width='968px'
+            marginBottom='14px'
+          >
+            <h1>Projects For {teamState.name}</h1>
+            {user.admin && (
+              <Button
+                variant='contained'
+                onClick={handleNewOpen}
+                style={{
+                  backgroundColor: '#1ba098',
+                  color: 'white',
+                  width: '80px',
+                  height: '30px',
+                  fontSize: '12px',
+                }}
+                sx={{ ml: 'auto' }}
+              >
+                New
+              </Button>
+            )}
+          </Box>
+          <div>
+            <List dense={false}>
+              {projects.map((project) => (
+                <>
+                  <Divider style={{ backgroundColor: '#FFD580' }} />
                   <ListItem
+                    style={{ width: '1000px' }}
                     key={project.id}
                     secondaryAction={
                       <Button
@@ -238,6 +237,14 @@ const Projects = () => {
                         onClick={() => handleEditOpen(project.id)}
                         edge='end'
                         aria-label='edit'
+                        variant='contained'
+                        style={{
+                          backgroundColor: '#FFD580',
+                          color: 'black',
+                          width: '80px',
+                          height: '30px',
+                          fontSize: '12px',
+                        }}
                       >
                         Edit
                       </Button>
@@ -248,65 +255,251 @@ const Projects = () => {
                         <>
                           {project.name}
                           {project.active ? (
-                            <Button style={{ marginLeft: 70 }}>Active</Button>
+                            <Button
+                              variant='outlined'
+                              style={{
+                                marginLeft: 50,
+                                fontSize: 10,
+                                color: 'green',
+                                borderColor: 'green',
+                                padding: '2px 12px',
+                              }}
+                            >
+                              Active
+                            </Button>
                           ) : (
-                            <Button style={{ marginLeft: 70 }}>Inactive</Button>
+                            <Button
+                              variant='outlined'
+                              style={{
+                                marginLeft: 50,
+                                fontSize: 10,
+                                color: 'red',
+                                borderColor: 'red',
+                                padding: '2px 12px',
+                              }}
+                            >
+                              Inactive
+                            </Button>
                           )}
                         </>
                       }
                       secondary={project.description}
+                      primaryTypographyProps={{
+                        style: { color: 'white', maxWidth: '800px' },
+                        sx: { mb: 1 },
+                        noWrap: false,
+                      }}
+                      secondaryTypographyProps={{
+                        style: { color: 'white', maxWidth: '800px' },
+                        sx: { mt: 1 },
+                        noWrap: false,
+                      }}
                     />
                   </ListItem>
-                ))}
-              </List>
-            </div>
-          </Grid>
-          <Dialog open={editOpen} onClose={handleEditClose}>
-            <DialogActions>
-              <IconButton onClick={handleEditClose}>
-                <HighlightOffIcon />
-              </IconButton>
-            </DialogActions>
-            <DialogContent>
-              <TextField
-                autoFocus
-                margin='dense'
-                id='name'
-                label='Project Name'
-                type='text'
-                fullWidth
-                variant='standard'
-                value={projectName}
-                onChange={handleProjectNameChange}
-                defaultValue={projectName}
-              />
-              <TextField
-                autoFocus
-                margin='dense'
-                id='name'
-                label='Description'
-                type='text'
-                fullWidth
-                variant='standard'
-                value={description}
-                onChange={handleDescriptionChange}
-                defaultValue={description}
-              />
-            </DialogContent>
-            <DialogTitle>Active?</DialogTitle>
-            <InputLabel>Pick an option</InputLabel>
-            <Select
-              label='Pick an option'
-              value={isActiveProject === null ? '' : isActiveProject}
-              onChange={handleActiveChange}
+                </>
+              ))}
+            </List>
+          </div>
+          <ThemeProvider theme={theme}>
+            <Dialog
+              open={newOpen}
+              onClose={handleNewClose}
+              PaperProps={{
+                sx: {
+                  backgroundColor: '#0b2d45',
+                  height: '400px',
+                  width: '500px',
+                },
+              }}
             >
-              <MenuItem value={true}>Yes</MenuItem>
-              <MenuItem value={false}>No</MenuItem>
-            </Select>
-            <DialogActions>
-              <Button onClick={handleEditSave}>Save</Button>
-            </DialogActions>
-          </Dialog>
+              <DialogActions>
+                <IconButton onClick={handleNewClose} style={{ color: 'red' }}>
+                  <HighlightOffIcon />
+                </IconButton>
+              </DialogActions>
+              <DialogContent
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'column',
+                }}
+              >
+                <TextField
+                  autoFocus
+                  margin='dense'
+                  id='Project-Name'
+                  label='Project Name'
+                  type='text'
+                  fullWidth
+                  variant='standard'
+                  value={projectName}
+                  onChange={handleProjectNameChange}
+                  color='myCustomColor'
+                  focused
+                  InputProps={{
+                    style: {
+                      color: 'white',
+                    },
+                  }}
+                  sx={{ mt: 2, mb: 1 }}
+                />
+
+                <TextField
+                  autoFocus
+                  margin='dense'
+                  id='Description'
+                  label='Description'
+                  type='text'
+                  fullWidth
+                  variant='standard'
+                  value={description}
+                  onChange={handleDescriptionChange}
+                  color='myCustomColor'
+                  focused
+                  InputProps={{
+                    style: {
+                      color: 'white',
+                    },
+                  }}
+                  sx={{ mt: 2, mb: 1 }}
+                />
+              </DialogContent>
+              <DialogActions
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <center>
+                  <Button
+                    variant='contained'
+                    onClick={handleNewSubmit}
+                    style={{
+                      backgroundColor: '#1ba098',
+                      color: 'white',
+                      width: '120px',
+                      height: '30px',
+                      fontSize: '12px',
+                    }}
+                    sx={{ ml: 'auto' }}
+                  >
+                    Submit
+                  </Button>
+                </center>
+              </DialogActions>
+            </Dialog>
+            <Dialog
+              open={editOpen}
+              onClose={handleEditClose}
+              PaperProps={{
+                sx: {
+                  backgroundColor: '#0b2d45',
+                  height: '500px',
+                  width: '500px',
+                },
+              }}
+            >
+              <DialogActions>
+                <IconButton onClick={handleEditClose} style={{ color: 'red' }}>
+                  <HighlightOffIcon />
+                </IconButton>
+              </DialogActions>
+              <DialogContent
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'column',
+                }}
+              >
+                <TextField
+                  autoFocus
+                  margin='dense'
+                  id='name'
+                  label='Project Name'
+                  type='text'
+                  fullWidth
+                  variant='standard'
+                  value={projectName}
+                  onChange={handleProjectNameChange}
+                  defaultValue={projectName}
+                  color='myCustomColor'
+                  focused
+                  InputProps={{
+                    style: {
+                      color: 'white',
+                    },
+                  }}
+                  sx={{ mt: 2, mb: 1 }}
+                />
+                <TextField
+                  autoFocus
+                  margin='dense'
+                  id='name'
+                  label='Description'
+                  type='text'
+                  fullWidth
+                  variant='standard'
+                  value={description}
+                  onChange={handleDescriptionChange}
+                  defaultValue={description}
+                  color='myCustomColor'
+                  focused
+                  InputProps={{
+                    style: {
+                      color: 'white',
+                    },
+                  }}
+                  sx={{ mt: 2, mb: 1 }}
+                />
+                <DialogTitle
+                  sx={{
+                    color: '#FFD580',
+                  }}
+                >
+                  Active?
+                </DialogTitle>
+                <Select
+                  value={isActiveProject === null ? '' : isActiveProject}
+                  onChange={handleActiveChange}
+                  width='600px'
+                  sx={{
+                    backgroundColor: 'white',
+                  }}
+                >
+                  <MenuItem value={true}>Yes</MenuItem>
+                  <MenuItem value={false}>No</MenuItem>
+                </Select>
+              </DialogContent>
+              <DialogActions
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '20px',
+                }}
+              >
+                <center>
+                  <Button
+                    variant='contained'
+                    onClick={handleEditSave}
+                    style={{
+                      backgroundColor: '#1ba098',
+                      color: 'white',
+                      width: '120px',
+                      height: '30px',
+                      fontSize: '12px',
+                    }}
+                    sx={{ ml: 'auto' }}
+                  >
+                    Save
+                  </Button>
+                </center>
+              </DialogActions>
+            </Dialog>
+          </ThemeProvider>
         </Container>
       </>
     )
