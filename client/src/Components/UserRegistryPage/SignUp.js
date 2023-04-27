@@ -96,14 +96,10 @@ const SignUp = (props) => {
   const resetError = () => setFormError(errorState);
 
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleSignUp();
     }
   };
-
-  const PHONE_REGEX = new RegExp(
-    /"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$"/gim
-  );
 
   const formIsValid = () => {
     if (
@@ -197,8 +193,8 @@ const SignUp = (props) => {
 
   return (
     <StyledModal>
-      <Form >
-        <StyledDiv>
+      <Form>
+        <StyledDiv onKeyPress={handleKeyPress}>
           <Input
             placeholder="First Name"
             type="text"
@@ -208,6 +204,7 @@ const SignUp = (props) => {
               setFirstName(e.target.value);
               resetError();
             }}
+            onKeyPress={handleKeyPress}
           />
           <Input
             placeholder="Last Name"
@@ -218,6 +215,7 @@ const SignUp = (props) => {
               setLastName(e.target.value);
               resetError();
             }}
+            onKeyPress={handleKeyPress}
           />
         </StyledDiv>
         <Fragment>
@@ -229,6 +227,7 @@ const SignUp = (props) => {
               setEmail(e.target.value);
               resetError();
             }}
+            onKeyPress={handleKeyPress}
           />
         </Fragment>
         <Fragment>
@@ -240,6 +239,7 @@ const SignUp = (props) => {
               setPhone(e.target.value);
               resetError();
             }}
+            onKeyPress={handleKeyPress}
           />
         </Fragment>
         <Fragment>
@@ -251,6 +251,7 @@ const SignUp = (props) => {
               setUsername(e.target.value);
               resetError();
             }}
+            onKeyPress={handleKeyPress}
           />
         </Fragment>
         <StyledDiv>
@@ -263,6 +264,7 @@ const SignUp = (props) => {
               setPassword(e.target.value);
               resetError();
             }}
+            onKeyPress={handleKeyPress}
           />
           <Input
             placeholder="Confirm password"
@@ -273,19 +275,20 @@ const SignUp = (props) => {
               setConfirmPassword(e.target.value);
               resetError();
             }}
+            onKeyPress={handleKeyPress}
           />
         </StyledDiv>
 
         <div style={{ margin: "25px" }}>
           <Title>Make user an admin role?</Title>
-          <StyledSelect onChange={handleSelect}>
+          <StyledSelect onChange={handleSelect} onKeyPress={handleKeyPress}>
             {options.map((option, index) => {
               return <option key={index}>{option}</option>;
             })}
           </StyledSelect>
         </div>
 
-        <Button onClick={handleSignUp} onKeyPress={handleKeyPress}>Sign Up</Button>
+        <Button onClick={handleSignUp}>Sign Up</Button>
 
         {formError.isError && !formError.field ? (
           <p
