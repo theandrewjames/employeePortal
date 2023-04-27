@@ -22,3 +22,8 @@ export const saveProject = async (editedProject) => {
   )
   return response.data
 }
+
+export const getProjectById = async (projectId) => {
+  const response = await api.get(`/projects/${projectId}`)
+  return response.data
+}
