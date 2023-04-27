@@ -59,19 +59,23 @@ const CreateTeamOverlay = () => {
     setOpen(true)
   }
 
-  const handleClose = async () => {
-    // console.log("info: ", teamName, description, selectedMembers)
-
-    const teamDto = {
-      name: teamName,
-      description: description,
-      teammates: selectedMembers,
-    }
-    // console.log(teamDto)
-    setNewTeam(await createTeam(user.id, company.id, teamDto))
-    // console.log(newTeam)
-
+  const handleClose = () => {
     setOpen(false)
+  }
+
+  const submitTeam = async (event) => {
+    console.log("info: ", teamName, description, selectedMembers)
+    if (teamName && description && selectedMembers.length > 0) {
+      const teamDto = {
+        name: teamName,
+        description: description,
+        teammates: selectedMembers,
+      }
+      // console.log(teamDto)
+      setNewTeam(await createTeam(user.id, company.id, teamDto))
+      //console.log(newTeam)
+    }
+    handleClose()
   }
 
   const handleChange = (event) => {
@@ -91,13 +95,51 @@ const CreateTeamOverlay = () => {
   }
 
   return (
-    <div style={{ width: "100%" }}>
+    <>
       <Button
         variant='text'
         onClick={handleClickOpen}
-        style={{ fontSize: "8rem", width: "100%" }}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          color: "#DEB992",
+          width: "100%",
+          height: "100%",
+        }}
       >
-        +
+        <span
+          style={{
+            fontSize: "8rem",
+            position: "absolute",
+            width: "100px",
+            height: "0",
+            left: "32%",
+            top: "46%",
+            border: "4px solid #DEB992",
+            transform: "rotate(90deg)",
+          }}
+        ></span>
+        <span
+          style={{
+            fontSize: "8rem",
+            position: "absolute",
+            width: "100px",
+            height: "0",
+            left: "32%",
+            top: "46%",
+            border: "4px solid #DEB992",
+          }}
+        ></span>
+        <span
+          style={{
+            position: "absolute",
+            width: "100px",
+            height: "0",
+            left: "33%",
+            top: "80%",
+            textTransform: 'none',
+          }}
+        >New Team</span>
       </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogContent>
@@ -128,7 +170,7 @@ const CreateTeamOverlay = () => {
               style={{ width: "100%" }}
               labelId='select-label'
               id='members-select'
-              value={selectedMembers}
+              value=''
               label='Pick an option'
               onChange={handleChange}
             >
@@ -160,12 +202,12 @@ const CreateTeamOverlay = () => {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button variant='contained' onClick={handleClose}>
+          <Button variant='contained' onClick={submitTeam}>
             Submit
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   )
 }
 
