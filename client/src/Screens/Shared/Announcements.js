@@ -26,6 +26,8 @@ const Announcements = () => {
   const [message, setMessage] = useState("")
   const [formError, setFormError] = useRecoilState(errorState)
 
+  const resetError = () => setFormError(errorState)
+
   const btnstyle = {
     margin: "2px 0",
     background: "#1BA098",
@@ -93,6 +95,7 @@ const Announcements = () => {
   }
 
   const Title = {
+    color: "#deb992",
     fontWeight: "bold",
     margin: 0,
     fontSize: "25px",
@@ -130,20 +133,22 @@ const Announcements = () => {
   `
 
   const StyledModal = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    transition: "transform 0.6s ease-in-out",
-    textAlign: "center",
-    zIndex: 100,
-    width: "50%",
-    height: "70%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
-    padding: "0 50px",
+    background: "#051622",
+
+    // position: "absolute",
+    // top: "50%",
+    // left: "50%",
+    // transform: "translate(-50%, -50%)",
+    // transition: "transform 0.6s ease-in-out",
+    // textAlign: "center",
+    // zIndex: 100,
+    // width: "45%",
+    // height: "25%",
+    // display: "flex",
+    // alignItems: "center",
+    // justifyContent: "center",
+    // flexDirection: "column",
+    // padding: "0 50px",
   }
 
   useEffect(() => {
@@ -152,7 +157,7 @@ const Announcements = () => {
       setCompAnnouncements(data)
     }
     fetchData()
-  }, [announcementUpdate, user.companies[0].id])
+  }, [announcementUpdate])
 
   const handleNewAnnoucement = () => {
     setOpenNewDialog(true)
@@ -171,11 +176,15 @@ const Announcements = () => {
   }
 
   const saveAnnoucement = async () => {
-    setOpenNewDialog(false)
     console.log(user)
     if (formIsValid()) {
+      setOpenNewDialog(false)
       const savedData = await saveAnnouncement(company.id, title, message, user)
       console.log("Saving announcements...")
+
+      setTitle("")
+      setMessage("")
+      resetError()
       setAnnouncementUpdate(true)
     }
   }
@@ -252,7 +261,14 @@ const Announcements = () => {
             ))}
           </GridContainer>
           <Dialog
-            style={StyledModal}
+            PaperProps={{
+              sx: {
+                width: "45%",
+                height: "30%",
+                backgroundColor: "#051622",
+              },
+            }}
+            sx={StyledModal}
             open={openNewDialog}
             onClose={() => setOpenNewDialog(false)}
           >
@@ -263,6 +279,12 @@ const Announcements = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               fullWidth
+              InputLabelProps={{
+                style: { color: "#DEB992" },
+              }}
+              InputProps={{
+                style: { color: "#DEB992" },
+              }}
             />
             <TextField
               style={textfieldStyle}
@@ -270,6 +292,12 @@ const Announcements = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               fullWidth
+              InputLabelProps={{
+                style: { color: "#DEB992" },
+              }}
+              InputProps={{
+                style: { color: "#DEB992" },
+              }}
             />
             <DialogActions>
               <Button onClick={() => saveAnnoucement()}>Submit</Button>
