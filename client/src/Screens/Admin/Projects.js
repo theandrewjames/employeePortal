@@ -28,6 +28,32 @@ import {
   getProjects,
   saveProject,
 } from '../../Services/projects'
+import styled from 'styled-components'
+
+const Container = styled.div`
+  ${'' /* background-color: #051622; */}
+  background-color:white;
+  color: #1ba098;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  ${'' /* justify-content: center; */}
+  text-align: center;
+  height: 100vh;
+  fontsize: 35px;
+`
+
+const BackButton = styled.div`
+  position: fixed;
+  top: 150px;
+  left: 0;
+  width: 200px;
+  height: 100%;
+  a {
+    color: #1ba098;
+    text-decoration: none;
+  }
+`
 
 const Projects = () => {
   const [user, setUser] = useRecoilState(userState)
@@ -44,7 +70,13 @@ const Projects = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const data = await getProjects(company.id, teamState.id)
+      let data
+      if (user.admin) {
+        data = await getProjects(company.id, teamState.id)
+      } else {
+        data = await getProjects(user.companies[0].id, teamState.id)
+      }
+
       setProjects(data)
     }
     fetchData()
@@ -140,138 +172,143 @@ const Projects = () => {
     return <Navigate replace to='/teams' />
   } else {
     return (
-      <div>
-        <NavBar />
-        <br />
-        <br />
-        <Button>
-          <Link to='/teams'>
-            <ArrowBackIosIcon />
-            Back
-          </Link>
-        </Button>
-        <h1>Projects For {teamState.name}</h1>
-        {user.admin && (
-          <Button variant='outlined' onClick={handleNewOpen}>
-            New
-          </Button>
-        )}
-        <Dialog open={newOpen} onClose={handleNewClose}>
-          <DialogActions>
-            <IconButton onClick={handleNewClose}>
-              <HighlightOffIcon />
-            </IconButton>
-          </DialogActions>
-          <DialogContent>
-            <TextField
-              autoFocus
-              margin='dense'
-              id='Project-Name'
-              label='Project Name'
-              type='text'
-              fullWidth
-              variant='standard'
-              value={projectName}
-              onChange={handleProjectNameChange}
-            />
-            <TextField
-              autoFocus
-              margin='dense'
-              id='Description'
-              label='Description'
-              type='text'
-              fullWidth
-              variant='standard'
-              value={description}
-              onChange={handleDescriptionChange}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleNewSubmit}>Submit</Button>
-          </DialogActions>
-        </Dialog>
-        <Grid item xs={12} md={6}>
-          <div>
-            <List dense={false}>
-              {projects.map((project) => (
-                <ListItem
-                  key={project.id}
-                  secondaryAction={
-                    <Button
-                      value={project.id}
-                      onClick={() => handleEditOpen(project.id)}
-                      edge='end'
-                      aria-label='edit'
-                    >
-                      Edit
-                    </Button>
-                  }
-                >
-                  <ListItemText
-                    primary={
-                      <>
-                        {project.name}
-                        {project.active ? (
-                          <Button style={{ marginLeft: 70 }}>Active</Button>
-                        ) : (
-                          <Button style={{ marginLeft: 70 }}>Inactive</Button>
-                        )}
-                      </>
+      <>
+        <div>
+          <NavBar />
+        </div>
+        <Container>
+          <BackButton>
+            <Button>
+              <Link to='/teams'>
+                <ArrowBackIosIcon />
+                Back
+              </Link>
+            </Button>
+          </BackButton>
+
+          <h1>Projects For {teamState.name}</h1>
+          {user.admin && (
+            <Button variant='outlined' onClick={handleNewOpen}>
+              New
+            </Button>
+          )}
+          <Dialog open={newOpen} onClose={handleNewClose}>
+            <DialogActions>
+              <IconButton onClick={handleNewClose}>
+                <HighlightOffIcon />
+              </IconButton>
+            </DialogActions>
+            <DialogContent>
+              <TextField
+                autoFocus
+                margin='dense'
+                id='Project-Name'
+                label='Project Name'
+                type='text'
+                fullWidth
+                variant='standard'
+                value={projectName}
+                onChange={handleProjectNameChange}
+              />
+              <TextField
+                autoFocus
+                margin='dense'
+                id='Description'
+                label='Description'
+                type='text'
+                fullWidth
+                variant='standard'
+                value={description}
+                onChange={handleDescriptionChange}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleNewSubmit}>Submit</Button>
+            </DialogActions>
+          </Dialog>
+          <Grid item xs={12} md={6}>
+            <div>
+              <List dense={false}>
+                {projects.map((project) => (
+                  <ListItem
+                    key={project.id}
+                    secondaryAction={
+                      <Button
+                        value={project.id}
+                        onClick={() => handleEditOpen(project.id)}
+                        edge='end'
+                        aria-label='edit'
+                      >
+                        Edit
+                      </Button>
                     }
-                    secondary={project.description}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </div>
-        </Grid>
-        <Dialog open={editOpen} onClose={handleEditClose}>
-          <DialogActions>
-            <IconButton onClick={handleEditClose}>
-              <HighlightOffIcon />
-            </IconButton>
-          </DialogActions>
-          <DialogContent>
-            <TextField
-              autoFocus
-              margin='dense'
-              id='name'
-              label='Project Name'
-              type='text'
-              fullWidth
-              variant='standard'
-              value={projectName}
-              onChange={handleProjectNameChange}
-              defaultValue={projectName}
-            />
-            <TextField
-              autoFocus
-              margin='dense'
-              id='name'
-              label='Description'
-              type='text'
-              fullWidth
-              variant='standard'
-              value={description}
-              onChange={handleDescriptionChange}
-              defaultValue={description}
-            />
-          </DialogContent>
-          <DialogTitle>Active?</DialogTitle>
-          <InputLabel>Pick an option</InputLabel>
-          <Select
-            label='Pick an option'
-            value={isActiveProject === null ? '' : isActiveProject}
-            onChange={handleActiveChange}
-          >
-            <MenuItem value={true}>Yes</MenuItem>
-            <MenuItem value={false}>No</MenuItem>
-          </Select>
-          <DialogActions>
-            <Button onClick={handleEditSave}>Save</Button>
-          </DialogActions>
-        </Dialog>
-      </div>
+                  >
+                    <ListItemText
+                      primary={
+                        <>
+                          {project.name}
+                          {project.active ? (
+                            <Button style={{ marginLeft: 70 }}>Active</Button>
+                          ) : (
+                            <Button style={{ marginLeft: 70 }}>Inactive</Button>
+                          )}
+                        </>
+                      }
+                      secondary={project.description}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </div>
+          </Grid>
+          <Dialog open={editOpen} onClose={handleEditClose}>
+            <DialogActions>
+              <IconButton onClick={handleEditClose}>
+                <HighlightOffIcon />
+              </IconButton>
+            </DialogActions>
+            <DialogContent>
+              <TextField
+                autoFocus
+                margin='dense'
+                id='name'
+                label='Project Name'
+                type='text'
+                fullWidth
+                variant='standard'
+                value={projectName}
+                onChange={handleProjectNameChange}
+                defaultValue={projectName}
+              />
+              <TextField
+                autoFocus
+                margin='dense'
+                id='name'
+                label='Description'
+                type='text'
+                fullWidth
+                variant='standard'
+                value={description}
+                onChange={handleDescriptionChange}
+                defaultValue={description}
+              />
+            </DialogContent>
+            <DialogTitle>Active?</DialogTitle>
+            <InputLabel>Pick an option</InputLabel>
+            <Select
+              label='Pick an option'
+              value={isActiveProject === null ? '' : isActiveProject}
+              onChange={handleActiveChange}
+            >
+              <MenuItem value={true}>Yes</MenuItem>
+              <MenuItem value={false}>No</MenuItem>
+            </Select>
+            <DialogActions>
+              <Button onClick={handleEditSave}>Save</Button>
+            </DialogActions>
+          </Dialog>
+        </Container>
+      </>
     )
   }
 }
