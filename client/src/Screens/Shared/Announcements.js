@@ -80,11 +80,11 @@ const Announcements = () => {
   `
   useEffect(() => {
     async function fetchData() {
-      const data = await getAnnouncements(company.id)
+      const data = await getAnnouncements(user.companies[0].id)
       setCompAnnouncements(data)
     }
     fetchData()
-  }, [announcementUpdate, company.id])
+  }, [announcementUpdate, user.companies[0].id])
 
   const handleNewAnnoucement = () => {
     setOpenNewDialog(true)
@@ -93,12 +93,7 @@ const Announcements = () => {
   const saveAnnoucement = async () => {
     setOpenNewDialog(false)
     console.log(user)
-    const savedData = await saveAnnouncement(
-      company.id,
-      title,
-      message,
-      user
-    )
+    const savedData = await saveAnnouncement(company.id, title, message, user)
     console.log("Saving announcements...")
     setAnnouncementUpdate(true)
   }
