@@ -148,7 +148,6 @@ const Teams = () => {
             width: "100%",
             display: "flex",
             flexDirection: "column",
-            flexWrap: "wrap",
             justifyContent: "flex-start",
             alignItems: "center",
             background: "#051622",
