@@ -389,11 +389,8 @@ const CreateTeamOverlay = () => {
               background: "#1ba098",
               borderRadius: "10.2875px",
               border: "1px",
-              // text-transform: uppercase;
-              // letter-spacing: 1px;
               padding: "12px 45px",
               margin: "30px 0",
-              // font-weight: bold;
               cursor: "pointer",
               color: "rgba(255, 255, 255, 0.75)",
             }}
